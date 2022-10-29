@@ -1,4 +1,4 @@
-package sparkuniverse.amo.sparkofadventure.registry;
+package sparkuniverse.amo.sparkofadventure;
 
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
