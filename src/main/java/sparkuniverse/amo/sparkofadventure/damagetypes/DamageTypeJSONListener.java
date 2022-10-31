@@ -1,10 +1,8 @@
-package sparkuniverse.amo.sparkofadventure;
+package sparkuniverse.amo.sparkofadventure.damagetypes;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -13,8 +11,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import sparkuniverse.amo.sparkofadventure.SparkOfAdventure;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 

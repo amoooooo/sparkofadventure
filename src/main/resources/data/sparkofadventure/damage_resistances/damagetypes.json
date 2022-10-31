@@ -3,17 +3,18 @@
     "minecraft:zombie": {
       "sparkofadventure:fire_resistance": 1.5,
       "sparkofadventure:cold_resistance": 0.5,
-      "sparkofadventure:bludgeoning_resistance": 0.5,
-      "sparkofadventure:piercing_resistance": 0.5,
-      "sparkofadventure:slashing_resistance": 0.5,
-      "sparkofadventure:lightning_resistance": 0.5,
+      "sparkofadventure:lightning_resistance": 1,
       "sparkofadventure:poison_resistance": 0.5,
       "sparkofadventure:acid_resistance": 0.5,
       "sparkofadventure:radiant_resistance": 2,
       "sparkofadventure:necrotic_resistance": 0.5,
       "sparkofadventure:thunder_resistance": 0.5,
       "sparkofadventure:force_resistance": 0.5,
-      "sparkofadventure:psychic_resistance": 0.5
+      "sparkofadventure:psychic_resistance": 0.5,
+      "sparkofadventure:water_resistance": 1,
+      "sparkofadventure:earth_resistance": 1,
+      "sparkofadventure:air_resistance": 1,
+      "sparkofadventure:nature_resistance": 1
     }
   }
 }

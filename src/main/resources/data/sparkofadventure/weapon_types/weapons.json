@@ -1,0 +1,18 @@
+{
+  "bludgeoning": [
+    "minecraft:stone_shovel",
+    "minecraft:iron_shovel"
+  ],
+  "piercing": [
+    "minecraft:stone_pickaxe",
+    "minecraft:iron_pickaxe"
+  ],
+  "slashing": [
+    "minecraft:diamond_sword",
+    "minecraft:iron_sword",
+    "minecraft:stone_sword",
+    "minecraft:iron_axe",
+    "minecraft:stone_axe",
+    "minecraft:diamond_axe"
+  ]
+}
