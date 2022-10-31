@@ -1,0 +1,40 @@
+{
+        "type": "apotheosis:attribute",
+        "attribute": "sparkofadventure:lightning_reaction_up",
+        "operation": "ADDITION",
+        "values": {
+          "common": {
+            "min": 1,
+            "steps": 10,
+            "step": 0.5
+          },
+          "uncommon": {
+            "min": 1,
+            "steps": 10,
+            "step": 0.75
+          },
+          "rare": {
+            "min": 1,
+            "steps": 10,
+            "step": 1
+          },
+          "epic": {
+            "min": 1,
+            "steps": 12,
+            "step": 1
+          },
+          "mythic": {
+            "min": 1,
+            "steps": 15,
+            "step": 1
+          },
+          "ancient": {
+            "min": 1,
+            "steps": 30,
+            "step": 1
+          }
+        },
+        "types": [
+          "ARMOR"
+        ]
+      }

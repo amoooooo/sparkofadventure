@@ -14,11 +14,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
+import sparkuniverse.amo.sparkofadventure.reactions.effects.LastingEffectMap;
 import sparkuniverse.amo.sparkofadventure.reactions.effects.particle.ParticleRegistry;
 import sparkuniverse.amo.sparkofadventure.util.ColorHelper;
 
 import static sparkuniverse.amo.sparkofadventure.damagetypes.AttributeRegistry.*;
 import static sparkuniverse.amo.sparkofadventure.reactions.effects.ReactionEffects.EFFECTS;
+import static sparkuniverse.amo.sparkofadventure.reactions.entity.EntityRegistry.ENTITY_TYPES;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(SparkOfAdventure.MODID)
@@ -35,28 +37,15 @@ public class SparkOfAdventure {
         IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
         DAMAGE_ATTRIBUTES.register(modEventBus);
         RESISTANCE_ATTRIBUTES.register(modEventBus);
+        REACTION_ATTRIBUTES.register(modEventBus);
         EFFECTS.register(modEventBus);
         ColorHelper.init();
+        LastingEffectMap.init();
+        ENTITY_TYPES.register(modEventBus);
         ParticleRegistry.register(modEventBus);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             SparkOfAdventureClient.onCtorClient(modEventBus, forgeEventBus);
         });
-    }
-
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-
-        @SubscribeEvent
-        public static void attrMod(final EntityAttributeModificationEvent event) {
-            for (EntityType<? extends LivingEntity> type : event.getTypes()) {
-                for (RegistryObject<Attribute> registryObject : RESISTANCE_ATTRIBUTES.getEntries()) {
-                    event.add(type, registryObject.get(), 1.0);
-                }
-                for (RegistryObject<Attribute> registryObject : DAMAGE_ATTRIBUTES.getEntries()) {
-                    event.add(type, registryObject.get(), 0.0);
-                }
-            }
-        }
     }
 
 }

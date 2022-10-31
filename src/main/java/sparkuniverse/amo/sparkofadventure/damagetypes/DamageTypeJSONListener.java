@@ -55,7 +55,7 @@ public class DamageTypeJSONListener extends SimpleJsonResourceReloadListener {
                         throw new IllegalArgumentException();
                     }
                     
-                    double resistance = damageTypeEntry.getValue().getAsDouble();
+                    double resistance = damageTypeEntry.getValue().getAsDouble() * 100;
                     resistanceMap.put(attribute, resistance);
                 }
                 attributeResistances.put(entityType, resistanceMap);

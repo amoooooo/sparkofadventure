@@ -13,6 +13,7 @@ public class ColorHelper {
         typeColorMap.put("sparkofadventure:water_damage", 0x4bc3f1);
         typeColorMap.put("sparkofadventure:earth_damage", 0xfab632);
         typeColorMap.put("sparkofadventure:air_damage", 0x74c2a8);
+        typeColorMap.put("sparkofadventure:acid_damage", 0xfc4e03);
         typeColorMap.put("sparkofadventure:necrotic_damage", 0x343A45);
         typeColorMap.put("sparkofadventure:radiant_damage", 0xF0E797);
         typeColorMap.put("sparkofadventure:psychic_damage", 0xE477F7);
