@@ -33,6 +33,7 @@ public class ParticleHelper {
     public static void spawnParticle(double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int color, Level level) {
         Color c = new Color(color);
         CubeParticleData particle = new CubeParticleData(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 0.05f, 1, false);
-        level.getServer().overworld().sendParticles(particle, x, y, z, 1, 0,0, 0, ySpeed);
+        if(!level.isClientSide)
+            level.getServer().getLevel(level.dimension()).sendParticles(particle, x, y, z, 1, 0,0, 0, ySpeed);
     }
 }
