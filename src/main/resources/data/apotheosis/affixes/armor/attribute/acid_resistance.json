@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:acid_resistance",
+        "attribute": "alkahest:acid_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

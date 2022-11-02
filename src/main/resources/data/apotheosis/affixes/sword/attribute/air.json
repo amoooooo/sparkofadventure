@@ -1,6 +1,6 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "sparkofadventure:air_damage",
+	"attribute": "alkahest:air_damage",
 	"operation": "ADDITION",
 	"values": {
 		"common": {

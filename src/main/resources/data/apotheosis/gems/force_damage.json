@@ -2,7 +2,7 @@
         "weight": 10,
         "quality": 4,
         "variant": 3,
-        "attribute": "sparkofadventure:force_damage",
+        "attribute": "alkahest:force_damage",
         "operation": "MULTIPLY_TOTAL",
         "value": {
             "min": 0.05,

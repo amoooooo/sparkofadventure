@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:radiant_resistance",
+        "attribute": "alkahest:radiant_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:psychic_resistance",
+        "attribute": "alkahest:psychic_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

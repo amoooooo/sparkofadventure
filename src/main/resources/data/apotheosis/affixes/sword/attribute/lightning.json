@@ -1,6 +1,6 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "sparkofadventure:lightning_damage",
+	"attribute": "alkahest:lightning_damage",
 	"operation": "ADDITION",
 	"values": {
 		"common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:necrotic_resistance",
+        "attribute": "alkahest:necrotic_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

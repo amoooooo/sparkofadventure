@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:cold_resistance",
+        "attribute": "alkahest:cold_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

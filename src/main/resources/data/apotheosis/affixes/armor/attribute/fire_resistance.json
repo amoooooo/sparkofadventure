@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:fire_resistance",
+        "attribute": "alkahest:fire_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

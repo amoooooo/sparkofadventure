@@ -1,6 +1,6 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "sparkofadventure:water_damage",
+	"attribute": "alkahest:water_damage",
 	"operation": "ADDITION",
 	"values": {
 		"common": {

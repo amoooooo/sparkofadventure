@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:lightning_reaction_up",
+        "attribute": "alkahest:lightning_reaction_up",
         "operation": "ADDITION",
         "values": {
           "common": {

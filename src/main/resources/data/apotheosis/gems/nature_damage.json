@@ -2,7 +2,7 @@
         "weight": 10,
         "quality": 4,
         "variant": 10,
-        "attribute": "sparkofadventure:nature_damage",
+        "attribute": "alkahest:nature_damage",
         "operation": "MULTIPLY_TOTAL",
         "value": {
             "min": 0.05,

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:radiant_damage",
+        "attribute": "alkahest:radiant_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

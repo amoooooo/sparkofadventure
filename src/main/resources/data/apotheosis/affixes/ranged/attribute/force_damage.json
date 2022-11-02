@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:force_damage",
+        "attribute": "alkahest:force_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

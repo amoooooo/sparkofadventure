@@ -1,0 +1,20 @@
+{
+  "mobs": {
+    "minecraft:zombie": {
+      "alkahest:fire_resistance": 1.5,
+      "alkahest:cold_resistance": 0.5,
+      "alkahest:lightning_resistance": 1,
+      "alkahest:poison_resistance": 0.5,
+      "alkahest:acid_resistance": 0.5,
+      "alkahest:radiant_resistance": 2,
+      "alkahest:necrotic_resistance": 0.5,
+      "alkahest:thunder_resistance": 0.5,
+      "alkahest:force_resistance": 0.5,
+      "alkahest:psychic_resistance": 0.5,
+      "alkahest:water_resistance": 1,
+      "alkahest:earth_resistance": 1,
+      "alkahest:air_resistance": 1,
+      "alkahest:nature_resistance": 1
+    }
+  }
+}

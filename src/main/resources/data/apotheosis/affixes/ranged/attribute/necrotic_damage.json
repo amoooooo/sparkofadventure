@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:necrotic_damage",
+        "attribute": "alkahest:necrotic_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

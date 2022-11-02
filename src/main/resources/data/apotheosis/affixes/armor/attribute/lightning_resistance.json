@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:lightning_resistance",
+        "attribute": "alkahest:lightning_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

@@ -2,7 +2,7 @@
         "weight": 10,
         "quality": 4,
         "variant": 9,
-        "attribute": "sparkofadventure:poison_damage",
+        "attribute": "alkahest:poison_damage",
         "operation": "MULTIPLY_TOTAL",
         "value": {
             "min": 0.05,

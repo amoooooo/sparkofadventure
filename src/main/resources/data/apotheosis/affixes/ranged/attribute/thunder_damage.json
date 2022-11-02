@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:thunder_damage",
+        "attribute": "alkahest:thunder_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:cold_damage",
+        "attribute": "alkahest:cold_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

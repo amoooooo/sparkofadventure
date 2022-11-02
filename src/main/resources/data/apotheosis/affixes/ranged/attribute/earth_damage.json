@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:earth_damage",
+        "attribute": "alkahest:earth_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:poison_resistance",
+        "attribute": "alkahest:poison_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

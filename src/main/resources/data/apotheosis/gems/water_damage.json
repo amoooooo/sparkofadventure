@@ -2,7 +2,7 @@
         "weight": 10,
         "quality": 4,
         "variant": 1,
-        "attribute": "sparkofadventure:water_damage",
+        "attribute": "alkahest:water_damage",
         "operation": "MULTIPLY_TOTAL",
         "value": {
             "min": 0.05,

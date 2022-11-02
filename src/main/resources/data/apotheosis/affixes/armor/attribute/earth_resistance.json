@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "sparkofadventure:earth_resistance",
+        "attribute": "alkahest:earth_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {
