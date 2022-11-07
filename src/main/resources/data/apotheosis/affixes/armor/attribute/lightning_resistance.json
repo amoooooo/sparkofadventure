@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:lightning_resistance",
+        "attribute": "elemental:lightning_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

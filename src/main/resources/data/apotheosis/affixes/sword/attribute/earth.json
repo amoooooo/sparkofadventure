@@ -1,6 +1,6 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "alkahest:earth_damage",
+	"attribute": "elemental:earth_damage",
 	"operation": "ADDITION",
 	"values": {
 		"common": {

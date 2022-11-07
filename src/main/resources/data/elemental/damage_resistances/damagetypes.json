@@ -1,0 +1,36 @@
+{
+  "mobs": {
+    "minecraft:zombie": {
+      "elemental:fire_resistance": 1.5,
+      "elemental:cold_resistance": 0.5,
+      "elemental:lightning_resistance": 1,
+      "elemental:poison_resistance": 0.5,
+      "elemental:acid_resistance": 0.5,
+      "elemental:radiant_resistance": 2,
+      "elemental:necrotic_resistance": 0.5,
+      "elemental:thunder_resistance": 0.5,
+      "elemental:force_resistance": 0.5,
+      "elemental:psychic_resistance": 0.5,
+      "elemental:water_resistance": 1,
+      "elemental:earth_resistance": 1,
+      "elemental:air_resistance": 1,
+      "elemental:nature_resistance": 1
+    },
+    "minecraft:blaze": {
+      "elemental:fire_resistance": 0.0,
+      "elemental:cold_resistance": 1.5,
+      "elemental:lightning_resistance": 1,
+      "elemental:poison_resistance": 0.5,
+      "elemental:acid_resistance": 0.5,
+      "elemental:radiant_resistance": 2,
+      "elemental:necrotic_resistance": 0.5,
+      "elemental:thunder_resistance": 0.5,
+      "elemental:force_resistance": 0.5,
+      "elemental:psychic_resistance": 0.5,
+      "elemental:water_resistance": 2,
+      "elemental:earth_resistance": 1,
+      "elemental:air_resistance": 1,
+      "elemental:nature_resistance": 1
+    }
+  }
+}

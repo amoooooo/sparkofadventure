@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:fire_resistance",
+        "attribute": "elemental:fire_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

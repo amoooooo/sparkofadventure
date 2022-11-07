@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:radiant_damage",
+        "attribute": "elemental:radiant_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

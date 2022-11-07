@@ -1,6 +1,6 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "alkahest:water_damage",
+	"attribute": "elemental:water_damage",
 	"operation": "ADDITION",
 	"values": {
 		"common": {

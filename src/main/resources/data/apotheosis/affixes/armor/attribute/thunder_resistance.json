@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:thunder_resistance",
+        "attribute": "elemental:thunder_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

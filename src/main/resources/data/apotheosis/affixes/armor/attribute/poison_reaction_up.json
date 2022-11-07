@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:poison_reaction_up",
+        "attribute": "elemental:poison_reaction_up",
         "operation": "ADDITION",
         "values": {
           "common": {

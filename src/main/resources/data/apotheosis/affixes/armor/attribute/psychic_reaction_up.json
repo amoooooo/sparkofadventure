@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:psychic_reaction_up",
+        "attribute": "elemental:psychic_reaction_up",
         "operation": "ADDITION",
         "values": {
           "common": {

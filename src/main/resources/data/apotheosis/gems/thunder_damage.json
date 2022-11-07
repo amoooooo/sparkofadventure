@@ -2,7 +2,7 @@
         "weight": 10,
         "quality": 4,
         "variant": 8,
-        "attribute": "alkahest:thunder_damage",
+        "attribute": "elemental:thunder_damage",
         "operation": "MULTIPLY_TOTAL",
         "value": {
             "min": 0.05,

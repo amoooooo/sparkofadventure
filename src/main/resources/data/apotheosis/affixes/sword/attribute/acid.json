@@ -1,6 +1,6 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "alkahest:acid_damage",
+	"attribute": "elemental:acid_damage",
 	"operation": "ADDITION",
 	"values": {
 		"common": {

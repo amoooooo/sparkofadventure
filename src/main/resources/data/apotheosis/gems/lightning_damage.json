@@ -2,7 +2,7 @@
         "weight": 10,
         "quality": 4,
         "variant": 7,
-        "attribute": "alkahest:lightning_damage",
+        "attribute": "elemental:lightning_damage",
         "operation": "MULTIPLY_TOTAL",
         "value": {
             "min": 0.05,

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:psychic_resistance",
+        "attribute": "elemental:psychic_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:water_resistance",
+        "attribute": "elemental:water_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

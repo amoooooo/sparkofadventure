@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:acid_reaction_up",
+        "attribute": "elemental:acid_reaction_up",
         "operation": "ADDITION",
         "values": {
           "common": {

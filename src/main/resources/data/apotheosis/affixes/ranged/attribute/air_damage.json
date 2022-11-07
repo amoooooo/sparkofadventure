@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:air_damage",
+        "attribute": "elemental:air_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

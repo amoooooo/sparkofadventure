@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:necrotic_damage",
+        "attribute": "elemental:necrotic_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:thunder_damage",
+        "attribute": "elemental:thunder_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

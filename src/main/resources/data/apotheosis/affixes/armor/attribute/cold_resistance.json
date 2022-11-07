@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:cold_resistance",
+        "attribute": "elemental:cold_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

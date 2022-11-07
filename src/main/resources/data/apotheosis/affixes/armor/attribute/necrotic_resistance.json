@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:necrotic_resistance",
+        "attribute": "elemental:necrotic_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:force_damage",
+        "attribute": "elemental:force_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

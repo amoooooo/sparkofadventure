@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:radiant_resistance",
+        "attribute": "elemental:radiant_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

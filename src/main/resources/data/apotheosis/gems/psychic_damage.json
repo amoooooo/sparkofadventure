@@ -2,7 +2,7 @@
         "weight": 10,
         "quality": 4,
         "variant": 4,
-        "attribute": "alkahest:psychic_damage",
+        "attribute": "elemental:psychic_damage",
         "operation": "MULTIPLY_TOTAL",
         "value": {
             "min": 0.05,

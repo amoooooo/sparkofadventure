@@ -1,6 +1,6 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "alkahest:nature_damage",
+	"attribute": "elemental:nature_damage",
 	"operation": "ADDITION",
 	"values": {
 		"common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:cold_damage",
+        "attribute": "elemental:cold_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

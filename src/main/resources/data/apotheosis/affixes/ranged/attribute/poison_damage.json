@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:poison_damage",
+        "attribute": "elemental:poison_damage",
         "operation": "ADDITION",
         "values": {
             "common": {

@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:acid_resistance",
+        "attribute": "elemental:acid_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

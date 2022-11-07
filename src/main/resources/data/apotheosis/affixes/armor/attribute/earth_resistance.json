@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:earth_resistance",
+        "attribute": "elemental:earth_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {

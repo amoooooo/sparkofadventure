@@ -1,6 +1,6 @@
 {
         "type": "apotheosis:attribute",
-        "attribute": "alkahest:force_resistance",
+        "attribute": "elemental:force_resistance",
         "operation": "ADDITION",
         "values": {
           "common": {
