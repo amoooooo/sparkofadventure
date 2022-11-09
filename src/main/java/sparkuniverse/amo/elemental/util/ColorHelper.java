@@ -21,4 +21,12 @@ public class ColorHelper {
         typeColorMap.put("elemental:thunder_damage", 0x77C0F7);
         typeColorMap.put("elemental:nature_damage", 0x98b73d);
     }
+
+    public static int getColor(String type){
+        String key = type;
+        if(type.contains("fire_damage") || type.contains("cold_damage")){
+            key = type.replace("elemental:", "apotheosis:");
+        }
+        return typeColorMap.get(key);
+    }
 }

@@ -21,7 +21,7 @@ public class LastingEffectMap {
     public static void init(){
         lastingEffectMap.put("elemental:acid_damage", (entity) -> {
             if(entity.level.random.nextFloat() > 0.959){
-                entity.hurt(DamageSource.MAGIC, 0.25f);
+                //entity.hurt(DamageSource.MAGIC, 0.25f);
                 
             }
         });
@@ -45,9 +45,9 @@ public class LastingEffectMap {
             });
         });
         lastingEffectMap.put("apotheosis:cold_damage", (entity) -> {
-            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 1));
+            //entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 1));
             if(entity.level.random.nextFloat() > 0.959){
-                entity.hurt(DamageSource.FREEZE, 0.25f);
+                //entity.hurt(DamageSource.FREEZE, 0.25f);
                 
             }
         });
@@ -69,36 +69,20 @@ public class LastingEffectMap {
             }
         });
         lastingEffectMap.put("elemental:water_damage", (entity) -> {
-            if(entity.level.random.nextFloat() > 0.959){
-                entity.hurt(DamageSource.DROWN, 0.15f);
-                
-            }
         });
         lastingEffectMap.put("elemental:poison_damage", (entity) -> {
-            entity.addEffect(new MobEffectInstance(MobEffects.POISON, 20, 1));
         });
         lastingEffectMap.put("elemental:necrotic_damage", (entity) -> {
-            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 1));
         });
         lastingEffectMap.put("elemental:radiant_damage", (entity) -> {
-            entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 2, 1));
         });
         lastingEffectMap.put("elemental:psychic_damage", (entity) -> {
-            entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 2, 1));
         });
         lastingEffectMap.put("elemental:force_damage", (entity) -> {
-            entity.addEffect(new MobEffectInstance(Apoth.Effects.SUNDERING.get(), 1, 1));
         });
         lastingEffectMap.put("elemental:thunder_damage", (entity) -> {
-            RandomSource random = entity.level.random;
-            entity.setDeltaMovement(entity.getDeltaMovement().add((random.nextFloat()-0.5)/10f, 0, (random.nextFloat()-0.5)/10f));
         });
         lastingEffectMap.put("elemental:nature_damage", (entity) -> {
-            if(entity instanceof NatureCoreEntity) return;
-            if(entity.level.random.nextFloat() > 0.959){
-                entity.hurt(DamageSource.CACTUS, 0.15f);
-                
-            }
         });
 
     }

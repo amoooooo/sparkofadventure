@@ -35,10 +35,10 @@ import sparkuniverse.amo.elemental.reactions.effects.particle.CubeParticleData;
 import sparkuniverse.amo.elemental.reactions.effects.particle.ParticleRenderer;
 import sparkuniverse.amo.elemental.reactions.effects.particle.ParticleStates;
 import sparkuniverse.amo.elemental.reactions.entity.NatureCoreEntity;
+import sparkuniverse.amo.elemental.util.Color;
 import sparkuniverse.amo.elemental.util.ColorHelper;
 import sparkuniverse.amo.elemental.util.Pair;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,9 +64,11 @@ public class ForgeEventHandler {
             final EntityType<?> entityType = event.getEntity().getType();
             if(hurtEntity.hasEffect(ReactionEffects.QUICKEN.get())){
                 if(attacker.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getValue() > 0){
+                    PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY()+hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Spread!", ColorHelper.typeColorMap.get(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())));
                     hurtEntity.addEffect(new MobEffectInstance(ReactionEffects.SPREAD.get(), 100, 1));
                 }
                 if(attacker.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()).getValue() > 0){
+                    PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY()+hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Aggravate!", ColorHelper.typeColorMap.get(AttributeRegistry.LIGHTNING_DAMAGE.get().getDescriptionId())));
                     hurtEntity.addEffect(new MobEffectInstance(ReactionEffects.AGGRAVATE.get(), 100, 1));
                 }
                 if(attacker.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue() > 0){
@@ -102,6 +104,8 @@ public class ForgeEventHandler {
                 }
                 if (attributeDamage > 0.001 && hurtEntity.getAttributes().hasAttribute(attribute)) {
                     hurtEntity.hurt(src(attacker), (float) (attributeDamage * mobResistance));
+                    PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY()+hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())),
+                            new ClientboundParticlePacket(hurtEntity.getId(), ""+Math.round(attributeDamage*mobResistance), ColorHelper.typeColorMap.get(playerAtt.getDescriptionId())));
                     if (mobResistance > 1) {
                         hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1.5f, 0.75f);
                     } else if (mobResistance < 1) {
@@ -121,6 +125,8 @@ public class ForgeEventHandler {
                     if(hurtEntity instanceof NatureCoreEntity ne) ne.remove(Entity.RemovalReason.DISCARDED);
                 }
             }
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY()+hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())),
+                    new ClientboundParticlePacket(hurtEntity.getId(), String.valueOf(Math.round(event.getAmount())), Color.WHITE.getRGB()));
             hurtEntity.hurt(src(attacker), event.getAmount());
             event.setCanceled(true);
         }
@@ -163,9 +169,15 @@ public class ForgeEventHandler {
         if (event.getEntity().level.isClientSide) return;
         if (event.getEntity() instanceof Player) return;
         event.getEntity().getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            if (!cap.getMarks().isEmpty()) {
-                if(event.getEntity().level.isRainingAt(event.getEntity().blockPosition())){
+            //if (!cap.getMarks().isEmpty()) {
+                if(event.getEntity().isInWaterOrRain() && !cap.hasMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId())){
                     cap.addMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId());
+                }
+                if(event.getEntity().isOnFire() && !cap.hasMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId())){
+                    cap.addMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId());
+                }
+                if(event.getEntity().isInPowderSnow || event.getEntity().level.isRaining() && event.getEntity().level.getBiome(event.getEntity().blockPosition()).get().coldEnoughToSnow(event.getEntity().blockPosition()) && !cap.hasMark(Apoth.Attributes.COLD_DAMAGE.get().getDescriptionId())){
+                    cap.addMark(Apoth.Attributes.COLD_DAMAGE.get().getDescriptionId());
                 }
                 List<String> toRemove = new ArrayList<>();
                 cap.getMarks().forEach(s -> {
@@ -180,7 +192,7 @@ public class ForgeEventHandler {
                     event.getEntity().level.getServer().getLevel(event.getEntity().level.dimension()).sendParticles(particleData, event.getEntity().getX() + (event.getEntity().level.random.nextFloat() - 0.5), (event.getEntity().getEyeY() - (event.getEntity().getBbHeight()/2)) + (event.getEntity().level.random.nextFloat() - 0.5), event.getEntity().getZ() + (event.getEntity().level.random.nextFloat() - 0.5), 3, 0, 0, 0, 0.1);
                 });
                 toRemove.forEach(cap::removeMark);
-            }
+            //}
         });
     }
 

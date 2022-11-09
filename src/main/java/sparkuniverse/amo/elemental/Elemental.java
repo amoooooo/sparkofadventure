@@ -1,13 +1,17 @@
 package sparkuniverse.amo.elemental;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+import sparkuniverse.amo.elemental.compat.ars.ArsEvents;
+import sparkuniverse.amo.elemental.compat.ars.ArsRegistry;
 import sparkuniverse.amo.elemental.net.PacketHandler;
 import sparkuniverse.amo.elemental.reactions.effects.LastingEffectMap;
 import sparkuniverse.amo.elemental.reactions.effects.particle.ParticleRegistry;
@@ -29,6 +33,10 @@ public class Elemental {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static Random RAND = new Random();
 
+    public static ResourceLocation prefix(String name) {
+        return new ResourceLocation(MODID, name);
+    }
+
     public Elemental() {
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -45,6 +53,14 @@ public class Elemental {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ElementalClient.onCtorClient(modEventBus, forgeEventBus);
         });
+        if(ModList.get().isLoaded("ars_nouveau")){
+            try {
+                ArsRegistry.registerGlyphs();
+                MinecraftForge.EVENT_BUS.register(ArsEvents.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

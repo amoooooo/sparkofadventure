@@ -71,3 +71,11 @@ mandatory = true
 versionRange = "[6.0.1, )"
 ordering = "NONE"
 side = "BOTH"
+[[dependencies.elemental]]
+modId = "ars_nouveau"
+mandatory = false
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+versionRange = "[3.4.5.239, )"
+ordering = "AFTER"
+side = "BOTH"
+
