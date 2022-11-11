@@ -28,6 +28,8 @@ public class EarthCoreEntityRenderer extends EntityRenderer<EarthCoreEntity> {
     @Override
     public void render(EarthCoreEntity pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
+        pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(45));
+        pPoseStack.mulPose(Vector3f.XP.rotationDegrees(45));
         pPoseStack.mulPose(Vector3f.YP.rotationDegrees((pEntity.level.getGameTime() + pPartialTick)*5));
         pPoseStack.scale(0.5F, 0.5F, 0.5F);
         pPoseStack.translate(-0.5, -0.5 + (Math.sin((pPartialTick + pEntity.level.getGameTime())/5)/3f), -0.5);

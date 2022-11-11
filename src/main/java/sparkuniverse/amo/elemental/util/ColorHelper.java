@@ -6,7 +6,7 @@ import java.util.Map;
 public class ColorHelper {
     public static Map<String, Integer> typeColorMap = new HashMap<>();
     public static void init(){
-        typeColorMap.put("apotheosis:fire_damage", 0xd57239);
+        typeColorMap.put("apotheosis:fire_damage", 0xea8c15);
         typeColorMap.put("apotheosis:cold_damage", 0xCFFFFA);
         typeColorMap.put("elemental:lightning_damage", 0xB08FC2);
         typeColorMap.put("elemental:poison_damage", 0x00b029);

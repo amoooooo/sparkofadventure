@@ -23,4 +23,8 @@ public class ArsEvents {
     }
 
     // Wait for spell damage event to contain spell or effect reference
+    @SubscribeEvent
+    public static void onSpellDamageEvent(SpellDamageEvent event){
+
+    }
 }

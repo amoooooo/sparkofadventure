@@ -33,7 +33,8 @@ public class ReactionEffects {
     public static final RegistryObject<MobEffect> AGGRAVATE = EFFECTS.register("aggravate", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xB08FC2).addAttributeModifier(AttributeRegistry.LIGHTNING_RESISTANCE.get(), "3f40b744-5973-11ed-9b6a-0242ac120002", 0.85D, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<MobEffect> SPREAD = EFFECTS.register("spread", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0x98b73d).addAttributeModifier(AttributeRegistry.NATURE_RESISTANCE.get(), "f11470b2-5bb5-44f0-b051-1ff571588f70", 0.75D, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<MobEffect> QUICKEN = EFFECTS.register("quicken", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0x98b73d));
-    public static final RegistryObject<MobEffect> FROZEN = EFFECTS.register("frozen", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xCFFFFA).addAttributeModifier(Attributes.MOVEMENT_SPEED, "698d2af8-5876-11ed-9b6a-0242ac120002", 0D, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    public static final RegistryObject<MobEffect> FROZEN = EFFECTS.register("frozen", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xCFFFFA){
+    }.addAttributeModifier(Attributes.MOVEMENT_SPEED, "698d2af8-5876-11ed-9b6a-0242ac120002", 0D, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<MobEffect> BURNING = EFFECTS.register("burning", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xFF0000) {
         @Override
         public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {

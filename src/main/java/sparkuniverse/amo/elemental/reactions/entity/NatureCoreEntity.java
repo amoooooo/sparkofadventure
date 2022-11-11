@@ -151,4 +151,14 @@ public class NatureCoreEntity extends Mob {
     public Packet<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+
+    public static void onNatureCoreAttack(Entity attacker, Entity target){
+        if(attacker instanceof LivingEntity att){
+            if(att.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()) != null){
+                if(att.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()).getValue() > 0){
+
+                }
+            }
+        }
+    }
 }

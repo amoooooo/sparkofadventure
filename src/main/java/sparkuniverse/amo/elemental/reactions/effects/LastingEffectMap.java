@@ -30,19 +30,6 @@ public class LastingEffectMap {
         lastingEffectMap.put("elemental:earth_damage", (entity) -> {
         });
         lastingEffectMap.put("apotheosis:fire_damage", (entity) -> {
-            entity.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(r -> {
-                if(r.hasMark(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())){
-                    entity.hurt(DamageSource.IN_FIRE, 0.25f);
-                    entity.level.getEntities(null, entity.getBoundingBox().inflate(0.1f)).forEach(e -> {
-                        e.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(r2 -> {
-                            if(!r2.hasMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId())){
-                                r2.addMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId());
-                            }
-                        });
-                    });
-
-                }
-            });
         });
         lastingEffectMap.put("apotheosis:cold_damage", (entity) -> {
             //entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 1));

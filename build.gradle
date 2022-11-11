@@ -178,8 +178,9 @@ dependencies {
 
     implementation fg.deobf("curse.maven:apotheosis-313970:4048780")
     implementation fg.deobf("curse.maven:placebo-283644:4036338")
+    implementation fg.deobf("curse.maven:obscure_api-638417:4069036")
 
-    implementation fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.19.2:3.4.5.239")
+    implementation fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.19.2:3.4.5.240")
 
     implementation fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
     implementation fg.deobf("mezz.jei:jei-1.19.2-forge:${jei_version}")

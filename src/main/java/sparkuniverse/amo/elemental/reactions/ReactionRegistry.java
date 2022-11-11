@@ -20,6 +20,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import shadows.apotheosis.Apoth;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
+import sparkuniverse.amo.elemental.net.ClientboundMobEffectPacket;
 import sparkuniverse.amo.elemental.net.ClientboundParticlePacket;
 import sparkuniverse.amo.elemental.net.PacketHandler;
 import sparkuniverse.amo.elemental.reactions.capability.ReactionMarkCapabilityProvider;
@@ -140,6 +141,7 @@ public class ReactionRegistry {
 
     public static Reaction WATER_COLD = registerReaction(new Reaction(new Pair<>(AttributeRegistry.WATER_DAMAGE, Apoth.Attributes.COLD_DAMAGE), 1.5, (entity, player, damage) -> {
         entity.addEffect(new MobEffectInstance(ReactionEffects.FROZEN.get(), 120));
+        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ReactionEffects.FROZEN.get().getDescriptionId(), 120, 0, false, false, false));
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 127));
         ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.FROZEN.get().getColor(), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1, 0.45f);
@@ -513,6 +515,27 @@ public class ReactionRegistry {
         PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Frazzle!", ReactionEffects.FRAZZLE.get().getColor()));
         return true;
     }));
+
+    public static Reaction HYPERBLOOM = new Reaction(new Pair<>(AttributeRegistry.NATURE_DAMAGE, AttributeRegistry.LIGHTNING_DAMAGE), 1.5, (entity, player, damage) -> {
+
+        return true;
+    });
+
+    public static Reaction BURGEON = new Reaction(new Pair<>(AttributeRegistry.NATURE_DAMAGE, Apoth.Attributes.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
+        entity.level.getEntities(null, entity.getBoundingBox().inflate(2)).forEach(e -> {
+            if(!(e instanceof LivingEntity)) return;
+            float dmg = (float) (player.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.NATURE_REACTION_UP.get()).getValue());
+            if(e.equals(player)) dmg *= 0.5;
+            e.hurt(DamageSource.MAGIC, dmg);
+            e.invulnerableTime = 0;
+            e.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(s -> {
+                if(!s.hasMark(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())){
+                    s.addMark(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId());
+                }
+            });
+        });
+        return true;
+    });
 
 
 
