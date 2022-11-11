@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class ReactionMarkCapabilityProvider implements ICapabilitySerializable<CompoundTag> {
 
     public static final ResourceLocation ID = new ResourceLocation("elemental:reaction_mark");
-    public static final Capability<ReactionMarkCapabilityHandles> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
+    public static final Capability<ReactionMarkCapabilityHandler> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
     private final LazyOptional<ReactionMarkCapability> implContainer = LazyOptional.of(ReactionMarkCapability::new);
 
     @Override
@@ -35,7 +35,7 @@ public class ReactionMarkCapabilityProvider implements ICapabilitySerializable<C
         implContainer.ifPresent(cap -> cap.deserializeNBT(nbt));
     }
 
-    public static ReactionMarkCapabilityHandles getOrDefault(LivingEntity entity){
+    public static ReactionMarkCapabilityHandler getOrDefault(LivingEntity entity){
         return entity.getCapability(CAPABILITY).orElse(new ReactionMarkCapability());
     }
 }

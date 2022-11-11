@@ -2,104 +2,106 @@ package sparkuniverse.amo.elemental.reactions.capability;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
 import sparkuniverse.amo.elemental.damagetypes.Shield;
 
 import java.util.List;
 
 public class ShieldCapability implements ShieldCapabilityHandler{
-    List<Shield> shields;
+    public static Shield EMPTY = new Shield(AttributeRegistry.EARTH_REACTION_UP.get().getDescriptionId(), AttributeRegistry.EARTH_REACTION_UP.get().getDescriptionId(), 100, 100);
+    public Shield shield = EMPTY;
     @Override
-    public int getShield() {
-        return 0;
+    public int getShieldHealth() {
+        return shield.getHealth();
+    }
+
+    @Override
+    public int getShieldMaxHealth() {
+        return shield.getMaxHealth();
     }
 
     @Override
     public void setShield(Shield shield) {
-        Shield finalShield = shield.copy();
-        if(shields.stream().filter(shield1 -> shield1.getDefType().equals(shield.getDefType())).count() > 0){
-            for(Shield shield1 : shields){
-                if(shield1.getDefType().equals(shield.getDefType())){
-                    finalShield.setMaxHealth(finalShield.getMaxHealth()+shield1.getMaxHealth());
-                    finalShield.setHealth(finalShield.getHealth()+shield1.getHealth());
-                    shields.remove(shield1);
-                }
-            }
-        }
-        shields.add(finalShield);
+        this.shield = shield;
     }
 
     @Override
     public void damageShield(float amount, String defType) {
-        shields.stream().filter(shield -> shield.getDefType().equals(defType)).forEach(shield -> shield.damage(amount));
+        if(shield.getDefType().equals(defType)){
+            shield.damage((int) amount);
+        }
     }
 
     @Override
     public void healShield(int amount, String defType) {
-        shields.stream().filter(shield -> shield.getDefType().equals(defType)).forEach(shield -> shield.heal(amount));
+        if(shield.getDefType().equals(defType)){
+            shield.heal(amount);
+        }
     }
 
     @Override
     public void clearShield() {
-        shields.clear();
+        shield = EMPTY;
     }
 
     @Override
     public void removeShield(Shield shield) {
-        shields.remove(shield);
+        if(this.shield.equals(shield)){
+            this.shield = EMPTY;
+        }
     }
 
     @Override
     public void removeShield(String defType) {
-        shields.removeIf(shield -> shield.getDefType().equals(defType));
+        if(shield.getDefType().equals(defType)){
+            shield = EMPTY;
+        }
     }
 
     @Override
     public boolean hasShield(Shield shield) {
-        return shields.contains(shield);
+        return this.shield.equals(shield);
     }
 
     @Override
     public boolean hasShield(String defType) {
-        return shields.stream().anyMatch(shield -> shield.getDefType().equals(defType));
+        return shield.getDefType().equals(defType);
     }
 
     @Override
-    public Shield getShield(int index) {
-        return shields.get(index);
-    }
-
-    @Override
-    public Shield getShield(String defType) {
-        return shields.stream().filter(shield -> shield.getDefType().equals(defType)).findFirst().orElse(null);
+    public Shield getShield() {
+        return shield;
     }
 
     @Override
     public int getShieldCount() {
-        return shields.size();
-    }
-
-    @Override
-    public List<Shield> getShields() {
-        return shields;
+        return this.shield.equals(EMPTY) ? 0 : 1;
     }
 
     @Override
     public boolean hasShield() {
-        return !shields.isEmpty();
+        return !shield.equals(EMPTY);
+    }
+
+    @Override
+    public String getShieldDefType() {
+        return shield.getDefType();
+    }
+
+    @Override
+    public String getShieldBreakType() {
+        return shield.getBreakType();
     }
 
     @Override
     public CompoundTag serializeNBT() {
-        ListTag list = new ListTag();
-        shields.forEach(shield -> list.add(shield.serializeNbt()));
-        CompoundTag nbt = new CompoundTag();
-        nbt.put("shields", list);
-        return nbt;
+        CompoundTag tag = new CompoundTag();
+        tag.put("shield", shield.serializeNbt());
+        return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        ListTag list = nbt.getList("shields", 10);
-        list.forEach(tag -> shields.add(Shield.deserializeNbt((CompoundTag) tag)));
+        shield = Shield.deserializeNbt(nbt.getCompound("shield"));
     }
 }

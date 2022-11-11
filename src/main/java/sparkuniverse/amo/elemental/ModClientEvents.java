@@ -11,6 +11,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import sparkuniverse.amo.elemental.client.GenericRenderLayer;
+import sparkuniverse.amo.elemental.client.ShieldRenderLayer;
 
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class ModClientEvents {
     }
     private static void addIceLayer(EntityType<?> entityType, LivingEntityRenderer renderer) {
         renderer.addLayer(new GenericRenderLayer(renderer));
+        renderer.addLayer(new ShieldRenderLayer(renderer));
         Elemental.LOGGER.debug("Added Ice layer to entity type: {}", entityType.getDescription());
         System.out.println("Added Ice layer to entity type: " + entityType.getDescription());
     }

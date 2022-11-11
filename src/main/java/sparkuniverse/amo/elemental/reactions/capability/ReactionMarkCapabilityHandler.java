@@ -6,7 +6,7 @@ import sparkuniverse.amo.elemental.util.Pair;
 
 import java.util.List;
 
-public interface ReactionMarkCapabilityHandles extends INBTSerializable<CompoundTag> {
+public interface ReactionMarkCapabilityHandler extends INBTSerializable<CompoundTag> {
     String getMark(int index);
     void setMark(int index, String mark);
     void addMark(String mark);

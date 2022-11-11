@@ -7,7 +7,7 @@ import sparkuniverse.amo.elemental.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReactionMarkCapability implements ReactionMarkCapabilityHandles{
+public class ReactionMarkCapability implements ReactionMarkCapabilityHandler {
     private final List<Pair<String, Integer>> marks = new ArrayList<>();
     @Override
     public String getMark(int index) {

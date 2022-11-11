@@ -1,6 +1,7 @@
 package sparkuniverse.amo.elemental;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -111,6 +112,7 @@ public class ForgeEventHandler {
                             float shieldDamage = (float) (totalDamage.get() * 0.75f);
                             totalDamage.updateAndGet(v -> (v - shieldDamage));
                             s.damageShield(shieldDamage, playerAtt.getDescriptionId());
+                           if(attacker instanceof Player p) p.sendSystemMessage(Component.literal("Hit a shield!"));
                         }
                     });
                     hurtEntity.hurt(src(attacker), totalDamage.get().floatValue());
@@ -179,9 +181,7 @@ public class ForgeEventHandler {
         if (event.getEntity().level.isClientSide) return;
         if (event.getEntity() instanceof Player) return;
         event.getEntity().getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
-            s.getShields().forEach((k) -> {
-                k.tick(event.getEntity());
-            });
+            s.getShield().tick(event.getEntity());
         });
         event.getEntity().getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if (event.getEntity().isInWaterOrRain() && !cap.hasMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId())) {
