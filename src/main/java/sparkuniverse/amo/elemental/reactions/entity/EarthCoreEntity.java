@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
-import sparkuniverse.amo.elemental.damagetypes.Shield;
+import sparkuniverse.amo.elemental.damagetypes.shields.Shield;
 import sparkuniverse.amo.elemental.reactions.capability.ShieldCapabilityProvider;
 import sparkuniverse.amo.elemental.util.ColorHelper;
 import sparkuniverse.amo.elemental.util.ParticleHelper;
@@ -68,7 +68,7 @@ public class EarthCoreEntity extends NatureCoreEntity{
                 s.setShield(new Shield(AttributeRegistry.EARTH_REACTION_UP.get().getDescriptionId(), AttributeRegistry.EARTH_REACTION_UP.get().getDescriptionId(), 100, 100));
             });
             this.playSound(SoundEvents.AMETHYST_BLOCK_BREAK, this.getSoundVolume(), 0.65F);
-            ParticleHelper.particleBurst(this.getX(), this.getY(), this.getZ(), 200, 2, 1, ColorHelper.typeColorMap.get(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId()), this.level);
+            ParticleHelper.particleBurst(this.getX(), this.getY(), this.getZ(), 200, 2, 1, ColorHelper.getColor(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId()), this.level);
             this.hurt(DamageSource.MAGIC, 1);
             this.remove(RemovalReason.DISCARDED);
         }

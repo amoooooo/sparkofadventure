@@ -1,0 +1,12 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "elemental:font/shield.png",
+      "ascent": 8,
+      "chars": [
+        "+"
+      ]
+    }
+  ]
+}

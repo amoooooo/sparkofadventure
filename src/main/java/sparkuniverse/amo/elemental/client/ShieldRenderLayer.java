@@ -2,7 +2,10 @@ package sparkuniverse.amo.elemental.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -10,35 +13,63 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import sparkuniverse.amo.elemental.Elemental;
 import sparkuniverse.amo.elemental.reactions.capability.ShieldCapabilityProvider;
 import sparkuniverse.amo.elemental.reactions.effects.ReactionEffects;
+import sparkuniverse.amo.elemental.reactions.entity.NatureCoreEntityRenderer;
 import sparkuniverse.amo.elemental.util.Color;
 import sparkuniverse.amo.elemental.util.ColorHelper;
 
-public class ShieldRenderLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-    public static final ResourceLocation ICE = new ResourceLocation("textures/block/ice.png");
-    private final EntityModel<T> model;
+import java.util.List;
+import java.util.Map;
 
+public class ShieldRenderLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+    public static final ResourceLocation ICE = Elemental.prefix("textures/particle/blank.png");
+    private final EntityModel<T> model;
+    private final ShieldModel shieldModel = new ShieldModel();
     public ShieldRenderLayer(RenderLayerParent<T, M> pRenderer) {
         super(pRenderer);
         model = pRenderer.getModel();
     }
 
     @Override
-    public void render(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+    public void render(PoseStack ps, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
         pLivingEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
-            if(s.hasShield()){
-                Color color = new Color(ColorHelper.getColor(s.getShieldDefType()));
-                var opacity = s.getShieldHealth()/s.getShieldMaxHealth();
-                EntityModel<T> entityModel = this.model;
-                this.getParentModel().copyPropertiesTo(entityModel);
-                entityModel.prepareMobModel(pLivingEntity, pLimbSwing, pLimbSwingAmount, pPartialTick);
-                this.model.setupAnim(pLivingEntity, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
-                VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.entityTranslucent(new ResourceLocation("textures/particle/blank.png")));
-                pPoseStack.scale(1.1f, 1.1f, 1.1f);
-                pPoseStack.translate(0,0.25f,0);
-                entityModel.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, color.r, color.g, color.b, opacity);
-            }
+//            if(s.hasShield()){
+//                Color color = new Color(ColorHelper.getColor(s.getShieldDefType()), 1);
+//                var opacity = 0.35f;
+//                EntityModel<T> entityModel = this.model;
+//                this.getParentModel().copyPropertiesTo(entityModel);
+//                entityModel.prepareMobModel(pLivingEntity, pLimbSwing, pLimbSwingAmount, pPartialTick);
+//                this.model.setupAnim(pLivingEntity, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
+//                VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.entityTranslucentCull(ICE));
+//                ps.scale(1.0001f, 1.0001f, 1.0001f);
+//                ps.translate(0, -0.01825*pLivingEntity.getEyeHeight(), 0);
+//                entityModel.renderToBuffer(ps, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, color.r/255f, color.g/255f, color.b/255f, opacity);
+//                ps.translate(0, 0.000025, 0);
+//                ps.scale(1/1.075f, 1/1.075f, 1/1.075f);
+//                ps.translate(-pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight()/2f, -pLivingEntity.getBbHeight()+0.5f, -pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight()/2f);
+//                ps.scale(pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight(), pLivingEntity.getBbHeight()*2, pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight());
+//                //shieldModel.renderToBuffer(ps, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, color.r/255f, color.g/255f, color.b/255f, opacity);
+//            }
         });
+    }
+
+    public static class ShieldModel extends Model {
+        private final ModelPart shield;
+
+        public ShieldModel(){
+            super(NatureCoreEntityRenderer::lightning);
+            List<ModelPart.Cube> cube = List.of(
+                    new ModelPart.Cube(0,0,0,0,0,16,16,16,0,0,0,false,1,1)
+            );
+            shield = new ModelPart(cube, Map.of());
+        }
+
+
+        @Override
+        public void renderToBuffer(PoseStack ps, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
+            shield.render(ps, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+        }
     }
 }

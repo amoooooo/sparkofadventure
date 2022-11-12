@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "elemental.refmap.json",
   "mixins": [
+    "BowItemMixin",
     "LightningBoltMixin",
     "ThrownPotionMixin"
   ],

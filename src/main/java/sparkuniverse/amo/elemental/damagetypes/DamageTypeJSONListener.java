@@ -32,7 +32,6 @@ public class DamageTypeJSONListener extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(java.util.Map<ResourceLocation, JsonElement> object, ResourceManager rm, ProfilerFiller profiler) {
 
-
         object.forEach((key, element) -> {
 
             JsonObject obj = element.getAsJsonObject();

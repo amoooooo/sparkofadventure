@@ -155,7 +155,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Bloom!", ColorHelper.typeColorMap.get(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Bloom!", ColorHelper.getColor(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -344,7 +344,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -357,7 +357,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -368,7 +368,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -379,7 +379,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -390,7 +390,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -401,7 +401,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -412,7 +412,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.THUNDER_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.THUNDER_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -423,7 +423,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.PSYCHIC_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.PSYCHIC_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -434,7 +434,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -445,7 +445,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.AIR_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.AIR_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -456,7 +456,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.NECROTIC_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.NECROTIC_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 
@@ -467,7 +467,7 @@ public class ReactionRegistry {
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.typeColorMap.get(AttributeRegistry.RADIANT_DAMAGE.get().getDescriptionId())));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Crystallize!", ColorHelper.getColor(AttributeRegistry.RADIANT_DAMAGE.get().getDescriptionId())));
         return true;
     }));
 

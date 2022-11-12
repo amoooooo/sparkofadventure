@@ -1,14 +1,11 @@
 package sparkuniverse.amo.elemental.reactions.capability;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
-import sparkuniverse.amo.elemental.damagetypes.Shield;
-
-import java.util.List;
+import sparkuniverse.amo.elemental.damagetypes.shields.Shield;
 
 public class ShieldCapability implements ShieldCapabilityHandler{
-    public static Shield EMPTY = new Shield(AttributeRegistry.EARTH_REACTION_UP.get().getDescriptionId(), AttributeRegistry.EARTH_REACTION_UP.get().getDescriptionId(), 100, 100);
+    public Shield EMPTY = new Shield("none", "none", 1, 1);
     public Shield shield = EMPTY;
     @Override
     public int getShieldHealth() {
@@ -33,10 +30,22 @@ public class ShieldCapability implements ShieldCapabilityHandler{
     }
 
     @Override
+    public void damageShield(float amount) {
+        System.out.println("Shield damaged by " + amount);
+        shield.damage((int) amount);
+        System.out.println("Shield health is now " + shield.getHealth());
+    }
+
+    @Override
     public void healShield(int amount, String defType) {
         if(shield.getDefType().equals(defType)){
             shield.heal(amount);
         }
+    }
+
+    @Override
+    public void healShield(int amount) {
+        shield.heal(amount);
     }
 
     @Override

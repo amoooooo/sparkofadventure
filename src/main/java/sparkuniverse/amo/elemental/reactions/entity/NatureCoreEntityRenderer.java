@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class NatureCoreEntityRenderer extends EntityRenderer<NatureCoreEntity> {
-    Color color = new Color(ColorHelper.typeColorMap.get(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
+    Color color = new Color(ColorHelper.getColor(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
     private final NatureCoreEntityModel model = new NatureCoreEntityModel();
     protected NatureCoreEntityRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);

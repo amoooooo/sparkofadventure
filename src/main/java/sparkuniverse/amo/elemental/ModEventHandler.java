@@ -10,6 +10,7 @@ import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
+import sparkuniverse.amo.elemental.reactions.capability.ElementalArrowCapabilityHandler;
 import sparkuniverse.amo.elemental.reactions.capability.ReactionMarkCapabilityHandler;
 import sparkuniverse.amo.elemental.reactions.capability.ShieldCapabilityHandler;
 import sparkuniverse.amo.elemental.reactions.entity.EarthCoreEntity;
@@ -24,6 +25,7 @@ public class ModEventHandler {
     public static void registerCaps(final RegisterCapabilitiesEvent event){
         event.register(ReactionMarkCapabilityHandler.class);
         event.register(ShieldCapabilityHandler.class);
+        event.register(ElementalArrowCapabilityHandler.class);
     }
 
     @SubscribeEvent

@@ -1,8 +1,7 @@
-package sparkuniverse.amo.elemental.damagetypes;
+package sparkuniverse.amo.elemental.damagetypes.shields;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
-import sparkuniverse.amo.elemental.reactions.capability.ShieldCapability;
 import sparkuniverse.amo.elemental.reactions.capability.ShieldCapabilityProvider;
 
 public class Shield {
@@ -128,7 +127,7 @@ public class Shield {
     }
 
     public void tick(LivingEntity entity){
-        if(this == ShieldCapability.EMPTY) return;
+        if(this.breakType.equals("none")) return;
         if(health > maxHealth){
             health = maxHealth;
         }
@@ -139,7 +138,11 @@ public class Shield {
             entity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent((cap) -> {
                 cap.removeShield(this);
             });
+            return;
         }
-        health -= 1;
+    }
+
+    public void damageShield(int amount){
+        health -= amount;
     }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EarthCoreEntityRenderer extends EntityRenderer<EarthCoreEntity> {
-    Color color = new Color(ColorHelper.typeColorMap.get(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId()));
+    Color color = new Color(ColorHelper.getColor(AttributeRegistry.EARTH_DAMAGE.get().getDescriptionId()));
     private final EarthCoreEntityRenderer.EarthCoreEntityModel model = new EarthCoreEntityModel();
     protected EarthCoreEntityRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);

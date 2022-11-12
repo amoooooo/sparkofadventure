@@ -17,5 +17,6 @@ public class PacketHandler {
     public static void init() {
         INSTANCE.registerMessage(id++, ClientboundParticlePacket.class, ClientboundParticlePacket::encode, ClientboundParticlePacket::decode, ClientboundParticlePacket::handle);
         INSTANCE.registerMessage(id++, ClientboundMobEffectPacket.class, ClientboundMobEffectPacket::encode, ClientboundMobEffectPacket::decode, ClientboundMobEffectPacket::handle);
+        INSTANCE.registerMessage(id++, ClientBoundShieldPacket.class, ClientBoundShieldPacket::encode, ClientBoundShieldPacket::decode, ClientBoundShieldPacket::handle);
     }
 }

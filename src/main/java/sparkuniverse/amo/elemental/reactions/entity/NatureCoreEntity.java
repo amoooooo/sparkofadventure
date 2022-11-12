@@ -122,7 +122,7 @@ public class NatureCoreEntity extends Mob {
 
     @Override
     public void makePoofParticles() {
-        ParticleHelper.particleBurst(this.getX(), this.getY(), this.getZ(), 200, 2, 1, ColorHelper.typeColorMap.get(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()), this.level);
+        ParticleHelper.particleBurst(this.getX(), this.getY(), this.getZ(), 200, 2, 1, ColorHelper.getColor(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()), this.level);
     }
 
     @Override

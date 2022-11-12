@@ -1,7 +1,9 @@
 package sparkuniverse.amo.elemental;
 
+import net.bettercombat.api.EntityPlayer_BetterCombat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,20 +17,30 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 import shadows.apotheosis.Apoth;
+import sparkuniverse.amo.elemental.compat.bettercombat.BetterCombatCompat;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
 import sparkuniverse.amo.elemental.damagetypes.DamageTypeJSONListener;
 import sparkuniverse.amo.elemental.damagetypes.TypedRangedAttribute;
+import sparkuniverse.amo.elemental.damagetypes.shields.SelfShieldGoal;
+import sparkuniverse.amo.elemental.net.ClientBoundShieldPacket;
 import sparkuniverse.amo.elemental.net.ClientboundParticlePacket;
 import sparkuniverse.amo.elemental.net.PacketHandler;
+import sparkuniverse.amo.elemental.reactions.CombatHelper;
 import sparkuniverse.amo.elemental.reactions.Reaction;
 import sparkuniverse.amo.elemental.reactions.ReactionRegistry;
+import sparkuniverse.amo.elemental.reactions.capability.ElementalArrowCapabilityProvider;
 import sparkuniverse.amo.elemental.reactions.capability.ReactionMarkCapabilityProvider;
+import sparkuniverse.amo.elemental.reactions.capability.ShieldCapabilityHandler;
 import sparkuniverse.amo.elemental.reactions.capability.ShieldCapabilityProvider;
 import sparkuniverse.amo.elemental.reactions.effects.LastingEffectMap;
 import sparkuniverse.amo.elemental.reactions.effects.ReactionEffects;
@@ -42,6 +54,7 @@ import sparkuniverse.amo.elemental.util.Pair;
 
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -62,87 +75,140 @@ public class ForgeEventHandler {
         }
         Entity a = event.getSource().getDirectEntity() instanceof AbstractArrow ? ((AbstractArrow) event.getSource().getDirectEntity()).getOwner() : event.getSource().getDirectEntity();
         if (a instanceof LivingEntity attacker) {
+            AtomicBoolean isCharged = new AtomicBoolean(false);
+            if (event.getSource().getDirectEntity() instanceof AbstractArrow arr) {
+                arr.getCapability(ElementalArrowCapabilityProvider.CAPABILITY).ifPresent(s -> {
+                    if (s.hasElement()) {
+                        isCharged.set(true);
+                    }
+                });
+            }
             final LivingEntity hurtEntity = event.getEntity();
             final EntityType<?> entityType = event.getEntity().getType();
-            NatureCoreEntity.onNatureCoreAttack(attacker, hurtEntity);
-            if (hurtEntity.hasEffect(ReactionEffects.QUICKEN.get())) {
-                if (attacker.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getValue() > 0) {
-                    PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Spread!", ColorHelper.typeColorMap.get(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())));
-                    hurtEntity.addEffect(new MobEffectInstance(ReactionEffects.SPREAD.get(), 100, 1));
-                }
-                if (attacker.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()).getValue() > 0) {
-                    PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Aggravate!", ColorHelper.typeColorMap.get(AttributeRegistry.LIGHTNING_DAMAGE.get().getDescriptionId())));
-                    hurtEntity.addEffect(new MobEffectInstance(ReactionEffects.AGGRAVATE.get(), 100, 1));
-                }
-                if (attacker.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue() > 0) {
-                    Reaction reaction = ReactionRegistry.getReaction(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId(), List.of(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
-                    reaction.applyReaction(hurtEntity, attacker, attacker.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue());
-                }
-                if (attacker.getAttribute(AttributeRegistry.WATER_DAMAGE.get()).getValue() > 0) {
-                    Reaction reaction = ReactionRegistry.getReaction(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId(), List.of(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
-                    reaction.applyReaction(hurtEntity, attacker, attacker.getAttribute(AttributeRegistry.WATER_DAMAGE.get()).getValue());
-                }
-            }
-            final Map<Attribute, Double> resistanceMap = DamageTypeJSONListener.attributeResistances.get(entityType);
-            Map<Attribute, Double> newResMap = new HashMap<>();
-            for (RegistryObject<Attribute> attr : RESISTANCE_ATTRIBUTES.getEntries()) {
-                if (resistanceMap != null) {
-                    if (resistanceMap.containsKey(attr.get())) {
-                        newResMap.put(attr.get(), resistanceMap.get(attr.get()));
-                    }
-                } else {
-                    newResMap.put(attr.get(), hurtEntity.getAttributeValue(attr.get()));
-                }
-            }
-            for (Map.Entry<Attribute, Double> mapEntry : newResMap.entrySet()) {
-                final Attribute attribute = mapEntry.getKey();
-                double mobResistance = hurtEntity.getAttributeValue(attribute) / 100f;
-                Attribute playerAtt = ((TypedRangedAttribute) attribute).getType().get();
-                if (hurtEntity instanceof NatureCoreEntity && playerAtt != Apoth.Attributes.FIRE_DAMAGE.get()) continue;
-                double attributeDamage = attacker.getAttributes().hasAttribute(playerAtt) ? attacker.getAttributeValue(playerAtt) : 0.0;
-                if (attributeDamage * mobResistance == 0 && attributeDamage != 0) {
-                    if (attacker instanceof Player player) {
-                        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> ((ServerPlayer) player)), new ClientboundParticlePacket(hurtEntity.getId(), "Immune", Color.GRAY.getRGB()));
+            AtomicReference<Float> finalDamage = new AtomicReference<>(event.getAmount());
+            if (isCharged.get() || !(event.getSource().getDirectEntity() instanceof AbstractArrow)) {
+                if (ModList.get().isLoaded("bettercombat")) {
+                    if (BetterCombatCompat.betterCombatComboCheck(event, attacker, hurtEntity, finalDamage, avoidSO).getFirst()) {
+                        avoidSO = BetterCombatCompat.betterCombatComboCheck(event, attacker, hurtEntity, finalDamage, avoidSO).getSecond();
+                        return;
                     }
                 }
-                if (attributeDamage > 0.001 && hurtEntity.getAttributes().hasAttribute(attribute)) {
-                    AtomicReference<Double> totalDamage = new AtomicReference<>(attributeDamage * mobResistance);
-                    hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
-                        if(s.hasShield(playerAtt.getDescriptionId())){
-                            float shieldDamage = (float) (totalDamage.get() * 0.75f);
-                            totalDamage.updateAndGet(v -> (v - shieldDamage));
-                            s.damageShield(shieldDamage, playerAtt.getDescriptionId());
-                           if(attacker instanceof Player p) p.sendSystemMessage(Component.literal("Hit a shield!"));
-                        }
-                    });
-                    hurtEntity.hurt(src(attacker), totalDamage.get().floatValue());
-                    PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())),
-                            new ClientboundParticlePacket(hurtEntity.getId(), "" + Math.round(attributeDamage * mobResistance), ColorHelper.typeColorMap.get(playerAtt.getDescriptionId())));
-                    if (mobResistance > 1) {
-                        hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1.5f, 0.75f);
-                    } else if (mobResistance < 1) {
-                        hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 1.5f, 1.25f);
+                NatureCoreEntity.onNatureCoreAttack(attacker, hurtEntity);
+                if (hurtEntity.hasEffect(ReactionEffects.QUICKEN.get())) {
+                    if (attacker.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getValue() > 0) {
+                        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Spread!", ColorHelper.getColor(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())));
+                        hurtEntity.addEffect(new MobEffectInstance(ReactionEffects.SPREAD.get(), 100, 1));
                     }
-                    hurtEntity.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-                        if (!cap.hasMark(playerAtt.getDescriptionId())) {
-                            cap.addMark(playerAtt.getDescriptionId());
+                    if (attacker.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()).getValue() > 0) {
+                        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Aggravate!", ColorHelper.getColor(AttributeRegistry.LIGHTNING_DAMAGE.get().getDescriptionId())));
+                        hurtEntity.addEffect(new MobEffectInstance(ReactionEffects.AGGRAVATE.get(), 100, 1));
+                    }
+                    if (attacker.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue() > 0) {
+                        Reaction reaction = ReactionRegistry.getReaction(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId(), List.of(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
+                        reaction.applyReaction(hurtEntity, attacker, attacker.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue());
+                    }
+                    if (attacker.getAttribute(AttributeRegistry.WATER_DAMAGE.get()).getValue() > 0) {
+                        Reaction reaction = ReactionRegistry.getReaction(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId(), List.of(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
+                        reaction.applyReaction(hurtEntity, attacker, attacker.getAttribute(AttributeRegistry.WATER_DAMAGE.get()).getValue());
+                    }
+                }
+                final Map<Attribute, Double> resistanceMap = DamageTypeJSONListener.attributeResistances.get(entityType);
+                Map<Attribute, Double> newResMap = new HashMap<>();
+                for (RegistryObject<Attribute> attr : RESISTANCE_ATTRIBUTES.getEntries()) {
+                    if (resistanceMap != null) {
+                        if (resistanceMap.containsKey(attr.get())) {
+                            newResMap.put(attr.get(), resistanceMap.get(attr.get()));
                         }
-                        Reaction reaction = ReactionRegistry.getReaction(playerAtt.getDescriptionId(), cap.getMarks().stream().map(Pair::getFirst).collect(Collectors.toList()));
-                        if (reaction != null) {
-                            reaction.applyReaction(hurtEntity, attacker, attributeDamage);
-                            cap.removeMark(playerAtt.getDescriptionId());
-                            cap.removeMark(reaction.getOther(playerAtt.getDescriptionId()));
+                    } else {
+                        newResMap.put(attr.get(), hurtEntity.getAttributeValue(attr.get()));
+                    }
+                }
+                for (Map.Entry<Attribute, Double> mapEntry : newResMap.entrySet()) {
+                    final Attribute attribute = mapEntry.getKey();
+                    double mobResistance = hurtEntity.getAttributeValue(attribute) / 100f;
+                    Attribute playerAtt = ((TypedRangedAttribute) attribute).getType().get();
+                    if (hurtEntity instanceof NatureCoreEntity && playerAtt != Apoth.Attributes.FIRE_DAMAGE.get())
+                        continue;
+                    double attributeDamage = attacker.getAttributes().hasAttribute(playerAtt) ? attacker.getAttributeValue(playerAtt) : 0.0;
+                    if (attributeDamage * mobResistance == 0 && attributeDamage != 0) {
+                        if (attacker instanceof Player player) {
+                            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> ((ServerPlayer) player)), new ClientboundParticlePacket(hurtEntity.getId(), "Immune", Color.GRAY.getRGB()));
                         }
-                    });
-                    if (hurtEntity instanceof NatureCoreEntity ne) ne.remove(Entity.RemovalReason.DISCARDED);
+                    }
+                    if (attributeDamage > 0.001 && hurtEntity.getAttributes().hasAttribute(attribute)) {
+                        AtomicReference<Double> totalDamage = new AtomicReference<>(attributeDamage * mobResistance);
+                        AtomicReference<Float> shieldDamage = new AtomicReference<>((float) 0);
+                        hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
+                            Reaction reaction = ReactionRegistry.getReaction(playerAtt.getDescriptionId(), Collections.singletonList(s.getShieldBreakType()));
+                            if (reaction != null && s.hasShield()) {
+                                shieldDamage.set((float) (totalDamage.get() * 0.75f));
+                                totalDamage.updateAndGet(v -> (v - shieldDamage.get()));
+                                finalDamage.set((float) (totalDamage.get() * 0.25f));
+                                shieldDamage.set(shieldDamage.get()*2);
+                                damageShield(hurtEntity, playerAtt, shieldDamage, s);
+                            } else if (s.hasShield()) {
+                                shieldDamage.set((float) (totalDamage.get() * 0.35f));
+                                totalDamage.updateAndGet(v -> (v - shieldDamage.get()));
+                                finalDamage.set((float) (totalDamage.get() * 0.65f));
+                                damageShield(hurtEntity, playerAtt, shieldDamage, s);
+                            }
+                        });
+                        hurtEntity.hurt(src(attacker), totalDamage.get().floatValue());
+                        float visualDamage = (float) (totalDamage.get() + shieldDamage.get());
+                        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())),
+                                new ClientboundParticlePacket(hurtEntity.getId(), String.valueOf(Math.floor(visualDamage * 10) / 10), ColorHelper.getColor(playerAtt.getDescriptionId())));
+                        if (mobResistance > 1) {
+                            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1.5f, 0.75f);
+                        } else if (mobResistance < 1) {
+                            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 1.5f, 1.25f);
+                        }
+                        hurtEntity.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                            if (!cap.hasMark(playerAtt.getDescriptionId())) {
+                                cap.addMark(playerAtt.getDescriptionId());
+                            }
+                            Reaction reaction = ReactionRegistry.getReaction(playerAtt.getDescriptionId(), cap.getMarks().stream().map(Pair::getFirst).collect(Collectors.toList()));
+                            if (reaction != null) {
+                                reaction.applyReaction(hurtEntity, attacker, attributeDamage);
+                                cap.removeMark(playerAtt.getDescriptionId());
+                                cap.removeMark(reaction.getOther(playerAtt.getDescriptionId()));
+                            }
+                        });
+                        if (hurtEntity instanceof NatureCoreEntity ne) ne.remove(Entity.RemovalReason.DISCARDED);
+                    }
                 }
             }
-            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())),
-                    new ClientboundParticlePacket(hurtEntity.getId(), String.valueOf(Math.round(event.getAmount())), Color.WHITE.getRGB()));
-            hurtEntity.hurt(src(attacker), event.getAmount());
+            doFinalHurt(attacker, hurtEntity, finalDamage);
             event.setCanceled(true);
+
         }
         avoidSO = false;
+    }
+
+    private static void damageShield(LivingEntity hurtEntity, Attribute playerAtt, AtomicReference<Float> shieldDamage, @NotNull ShieldCapabilityHandler s) {
+        s.damageShield(shieldDamage.get(), playerAtt.getDescriptionId());
+        if (s.getShield().isBroken()) {
+            s.removeShield(playerAtt.getDescriptionId());
+            PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientBoundShieldPacket(0, shieldDamage.get(), true, hurtEntity.getId(), false, ""));
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())),
+                    new ClientboundParticlePacket(hurtEntity.getId(), "Broken!", ColorHelper.getColor(playerAtt.getDescriptionId())));
+            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.PLAYERS, 2f, hurtEntity.level.random.nextFloat() * 0.1f);
+        } else {
+            PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientBoundShieldPacket(0, shieldDamage.get(), false, hurtEntity.getId(), false, ""));
+            //hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 1.0f, hurtEntity.level.random.nextFloat()+0.1f);
+        }
+    }
+
+
+    public static void doFinalHurt(LivingEntity attacker, LivingEntity hurtEntity, AtomicReference<Float> finalDamage) {
+        if (Math.floor(finalDamage.get() * 10) / 10 <= 0) return;
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 32, hurtEntity.level.dimension())),
+                new ClientboundParticlePacket(hurtEntity.getId(), String.valueOf(Math.floor(finalDamage.get() * 10) / 10), Color.WHITE.getRGB()));
+        hurtEntity.hurt(src(attacker), finalDamage.get());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerAttack(AttackEntityEvent event) {
+
     }
 
     /**
@@ -152,7 +218,7 @@ public class ForgeEventHandler {
      * @return A DamageSource pertaining to whatever living entity caused the attack.
      */
 
-    private static DamageSource src(LivingEntity entity) {
+    public static DamageSource src(LivingEntity entity) {
         return entity instanceof Player p ? DamageSource.playerAttack(p) : DamageSource.mobAttack(entity);
     }
 
@@ -177,12 +243,44 @@ public class ForgeEventHandler {
     }
 
     @SubscribeEvent
+    public static void onEntityJoin(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof AbstractArrow abstractarrow) {
+            if (abstractarrow.isCritArrow()) {
+                Player player = (Player) abstractarrow.getOwner();
+                abstractarrow.getCapability(ElementalArrowCapabilityProvider.CAPABILITY).ifPresent(cap -> {
+                    AttributeRegistry.DAMAGE_ATTRIBUTES.getEntries().forEach(entry -> {
+                        if (player.getAttribute(entry.get()).getValue() > 0) {
+                            cap.addElement(entry.get().getDescriptionId());
+                        }
+                    });
+                });
+            }
+        }
+        if (event.getEntity().getPersistentData().contains("apoth.boss")) {
+            Entity entity = event.getEntity();
+            if (entity instanceof Mob le) {
+                le.goalSelector.addGoal(3, new SelfShieldGoal(le));
+            }
+        }
+    }
+
+    public static MutableComponent removeShieldFromName(Component name, String extension) {
+        return Component.literal(name.getString().replace(" + "+extension, "")).withStyle(name.getStyle());
+    }
+
+    @SubscribeEvent
     public static void entityTick(LivingEvent.LivingTickEvent event) {
-        if (event.getEntity().level.isClientSide) return;
-        if (event.getEntity() instanceof Player) return;
+
         event.getEntity().getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
             s.getShield().tick(event.getEntity());
+            if (s.hasShield() && event.getEntity().hasCustomName()) {
+                MutableComponent name = event.getEntity().getCustomName().toString().contains("+") ?
+                        removeShieldFromName(event.getEntity().getCustomName(), s.getShieldBreakType()) : (MutableComponent) event.getEntity().getCustomName();
+                event.getEntity().setCustomName(name.append(" ").append(Component.literal("+").withStyle(c -> c.withFont(Elemental.prefix("symbols")).withColor(0xFFFFFF))).append(" "+s.getShieldBreakType()));
+            }
         });
+        if (event.getEntity().level.isClientSide) return;
+        if (event.getEntity() instanceof Player) return;
         event.getEntity().getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if (event.getEntity().isInWaterOrRain() && !cap.hasMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId())) {
                 cap.addMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId());
@@ -207,7 +305,7 @@ public class ForgeEventHandler {
                     toRemove.add(s.getFirst());
                 }
                 LastingEffectMap.lastingEffectMap.get(s.getFirst()).accept(event.getEntity());
-                Color color = new Color(ColorHelper.typeColorMap.get(s.getFirst()));
+                Color color = new Color(ColorHelper.getColor(s.getFirst()));
                 CubeParticleData particleData = new CubeParticleData(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 0.025f, 1, false);
                 event.getEntity().level.getServer().getLevel(event.getEntity().level.dimension()).sendParticles(particleData, event.getEntity().getX() + (event.getEntity().level.random.nextFloat() - 0.5), (event.getEntity().getEyeY() - (event.getEntity().getBbHeight() / 2)) + (event.getEntity().level.random.nextFloat() - 0.5), event.getEntity().getZ() + (event.getEntity().level.random.nextFloat() - 0.5), 3, 0, 0, 0, 0.1);
             });
@@ -222,6 +320,9 @@ public class ForgeEventHandler {
         if (event.getObject() instanceof LivingEntity) {
             event.addCapability(ReactionMarkCapabilityProvider.ID, new ReactionMarkCapabilityProvider());
             event.addCapability(ShieldCapabilityProvider.ID, new ShieldCapabilityProvider());
+        }
+        if (event.getObject() instanceof AbstractArrow) {
+            event.addCapability(ElementalArrowCapabilityProvider.ID, new ElementalArrowCapabilityProvider());
         }
     }
 
