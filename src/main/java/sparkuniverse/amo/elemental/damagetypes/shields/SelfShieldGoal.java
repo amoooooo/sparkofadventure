@@ -1,5 +1,6 @@
 package sparkuniverse.amo.elemental.damagetypes.shields;
 
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -22,6 +23,8 @@ public class SelfShieldGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        float mobHealth = 1-(mob.getHealth() / mob.getMaxHealth());
+        if(mob.level.random.nextFloat() >= Math.min((0.05f + mobHealth), 0.15f)) return false;
         if(AttributeRegistry.RESISTANCE_ATTRIBUTES.getEntries().stream().map(RegistryObject::get).anyMatch(attribute -> mob.getAttribute(attribute).getValue() > 0)){
             return true;
         }
@@ -42,6 +45,7 @@ public class SelfShieldGoal extends Goal {
                 Elemental.LOGGER.warn("Applying {} shield to {}", highestAttr.getType().get().getDescriptionId(), mob);
                 Shield shield = new Shield(highestAttr.getType().get().getDescriptionId(), highestAttr.getType().get().getDescriptionId(), attrValue/10, attrValue/10);
                 cap.setShield(shield);
+                mob.playSound(SoundEvents.FIRE_EXTINGUISH, 1.5f, 0.35f);
                 PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientBoundShieldPacket(shield.maxHealth, 0, false, mob.getId(), true, highestAttr.getType().get().getDescriptionId()));
             }
         });
@@ -49,13 +53,6 @@ public class SelfShieldGoal extends Goal {
 
     @Override
     public void stop() {
-        mob.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(cap -> {
-            if(cap.getShield() != null){
-                if(cap.getShield().isBroken()){
-                    cap.clearShield();
-                }
-            }
-        });
     }
 
     @Override

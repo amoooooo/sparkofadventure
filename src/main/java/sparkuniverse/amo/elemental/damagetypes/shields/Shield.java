@@ -138,7 +138,6 @@ public class Shield {
             entity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent((cap) -> {
                 cap.removeShield(this);
             });
-            return;
         }
     }
 

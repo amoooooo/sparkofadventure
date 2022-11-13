@@ -26,7 +26,6 @@ import java.util.Map;
 public class ShieldRenderLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
     public static final ResourceLocation ICE = Elemental.prefix("textures/particle/blank.png");
     private final EntityModel<T> model;
-    private final ShieldModel shieldModel = new ShieldModel();
     public ShieldRenderLayer(RenderLayerParent<T, M> pRenderer) {
         super(pRenderer);
         model = pRenderer.getModel();
@@ -35,41 +34,22 @@ public class ShieldRenderLayer<T extends LivingEntity, M extends EntityModel<T>>
     @Override
     public void render(PoseStack ps, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
         pLivingEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
-//            if(s.hasShield()){
-//                Color color = new Color(ColorHelper.getColor(s.getShieldDefType()), 1);
-//                var opacity = 0.35f;
-//                EntityModel<T> entityModel = this.model;
-//                this.getParentModel().copyPropertiesTo(entityModel);
-//                entityModel.prepareMobModel(pLivingEntity, pLimbSwing, pLimbSwingAmount, pPartialTick);
-//                this.model.setupAnim(pLivingEntity, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
-//                VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.entityTranslucentCull(ICE));
-//                ps.scale(1.0001f, 1.0001f, 1.0001f);
-//                ps.translate(0, -0.01825*pLivingEntity.getEyeHeight(), 0);
-//                entityModel.renderToBuffer(ps, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, color.r/255f, color.g/255f, color.b/255f, opacity);
-//                ps.translate(0, 0.000025, 0);
-//                ps.scale(1/1.075f, 1/1.075f, 1/1.075f);
-//                ps.translate(-pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight()/2f, -pLivingEntity.getBbHeight()+0.5f, -pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight()/2f);
-//                ps.scale(pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight(), pLivingEntity.getBbHeight()*2, pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight());
-//                //shieldModel.renderToBuffer(ps, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, color.r/255f, color.g/255f, color.b/255f, opacity);
-//            }
+            if(s.hasShield()){
+                Color color = new Color(ColorHelper.getColor(s.getShieldDefType()), 1);
+                var opacity = 0.35f;
+                EntityModel<T> entityModel = this.model;
+                this.getParentModel().copyPropertiesTo(entityModel);
+                entityModel.prepareMobModel(pLivingEntity, pLimbSwing, pLimbSwingAmount, pPartialTick);
+                this.model.setupAnim(pLivingEntity, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
+                VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.entityTranslucentCull(ICE));
+                ps.scale(1.0001f, 1.0001f, 1.0001f);
+                ps.translate(0, -0.01825*pLivingEntity.getEyeHeight(), 0);
+                entityModel.renderToBuffer(ps, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, color.r/255f, color.g/255f, color.b/255f, opacity);
+                ps.translate(0, 0.000025, 0);
+                ps.scale(1/1.075f, 1/1.075f, 1/1.075f);
+                ps.translate(-pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight()/2f, -pLivingEntity.getBbHeight()+0.5f, -pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight()/2f);
+                ps.scale(pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight(), pLivingEntity.getBbHeight()*2, pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight());
+            }
         });
-    }
-
-    public static class ShieldModel extends Model {
-        private final ModelPart shield;
-
-        public ShieldModel(){
-            super(NatureCoreEntityRenderer::lightning);
-            List<ModelPart.Cube> cube = List.of(
-                    new ModelPart.Cube(0,0,0,0,0,16,16,16,0,0,0,false,1,1)
-            );
-            shield = new ModelPart(cube, Map.of());
-        }
-
-
-        @Override
-        public void renderToBuffer(PoseStack ps, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
-            shield.render(ps, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
-        }
     }
 }
