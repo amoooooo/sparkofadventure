@@ -151,6 +151,7 @@ public class ReactionRegistry {
     }));
 
     public static Reaction WATER_NATURE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.WATER_DAMAGE, AttributeRegistry.NATURE_DAMAGE), 1.5, (entity, player, damage) -> {
+        if(entity instanceof NatureCoreEntity) return false;
         NatureCoreEntity core = new NatureCoreEntity(EntityRegistry.NATURE_CORE.get(), entity.level);
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);

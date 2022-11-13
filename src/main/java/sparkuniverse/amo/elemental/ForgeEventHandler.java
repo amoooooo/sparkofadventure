@@ -84,7 +84,7 @@ public class ForgeEventHandler {
             if (isCharged.get() || !(event.getSource().getDirectEntity() instanceof AbstractArrow)) {
                 if (ModList.get().isLoaded("bettercombat")) {
                     if (BetterCombatCompat.betterCombatComboCheck(event, attacker, hurtEntity, finalDamage, avoidSO).getFirst()) {
-                        avoidSO = BetterCombatCompat.betterCombatComboCheck(event, attacker, hurtEntity, finalDamage, avoidSO).getSecond();
+                        avoidSO = false;
                         return;
                     }
                 }

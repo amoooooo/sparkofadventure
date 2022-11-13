@@ -19,7 +19,7 @@ public class ParticleRenderer {
 
     private static void renderParticle(PoseStack matrix, TextParticle particle, Camera camera, float ptick) {
         double distanceSquared = camera.getPosition().distanceToSqr(particle.x, particle.y, particle.z);
-        if (distanceSquared > 16) {
+        if (distanceSquared > 128) {
             return;
         }
 
