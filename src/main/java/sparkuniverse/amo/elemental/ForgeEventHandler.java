@@ -6,12 +6,16 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -46,6 +50,7 @@ import sparkuniverse.amo.elemental.reactions.entity.NatureCoreEntity;
 import sparkuniverse.amo.elemental.util.Color;
 import sparkuniverse.amo.elemental.util.ColorHelper;
 import sparkuniverse.amo.elemental.util.Pair;
+import sparkuniverse.amo.elemental.util.SymbolHelper;
 
 import java.util.*;
 import java.util.List;
@@ -88,7 +93,6 @@ public class ForgeEventHandler {
                         return;
                     }
                 }
-                handleNatureCoreAttack(attacker, hurtEntity);
                 final Map<Attribute, Double> resistanceMap = DamageTypeJSONListener.attributeResistances.get(entityType);
                 Map<Attribute, Double> newResMap = new HashMap<>();
                 for (RegistryObject<Attribute> attr : RESISTANCE_ATTRIBUTES.getEntries()) {
@@ -115,6 +119,7 @@ public class ForgeEventHandler {
         final Attribute attribute = mapEntry.getKey();
         double mobResistance = hurtEntity.getAttributeValue(attribute) / 100f;
         Attribute playerAtt = ((TypedRangedAttribute) attribute).getType().get();
+        handleNatureCoreAttack(attacker, hurtEntity, playerAtt);
         if (hurtEntity instanceof NatureCoreEntity && playerAtt != Apoth.Attributes.FIRE_DAMAGE.get())
             return;
         double attributeDamage = attacker.getAttributes().hasAttribute(playerAtt) ? attacker.getAttributeValue(playerAtt) : 0.0;
@@ -128,8 +133,8 @@ public class ForgeEventHandler {
         }
     }
 
-    private static void handleNatureCoreAttack(LivingEntity attacker, LivingEntity hurtEntity) {
-        NatureCoreEntity.onNatureCoreAttack(attacker, hurtEntity);
+    private static void handleNatureCoreAttack(LivingEntity attacker, LivingEntity hurtEntity, Attribute triggeringAtt) {
+        NatureCoreEntity.onNatureCoreAttack(attacker, hurtEntity, triggeringAtt);
         if (hurtEntity.hasEffect(ReactionEffects.QUICKEN.get())) {
             if (attacker.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getValue() > 0) {
                 PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Spread!", ColorHelper.getColor(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())));
@@ -159,7 +164,8 @@ public class ForgeEventHandler {
         hurtEntity.hurt(src(attacker), totalDamage.get().floatValue());
         float visualDamage = (float) (totalDamage.get() + shieldDamage.get());
         PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())),
-                new ClientboundParticlePacket(hurtEntity.getId(),  "\uD83D\uDEE1" +String.valueOf(Math.floor(visualDamage * 10) / 10), ColorHelper.getColor(playerAtt.getDescriptionId())));
+                new ClientboundParticlePacket(hurtEntity.getId(), "" + String.valueOf(Math.floor(visualDamage * 10) / 10), ColorHelper.getColor(playerAtt.getDescriptionId())));
+        // 🛡
         if (mobResistance > 1) {
             hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1.5f, 0.75f);
         } else if (mobResistance < 1) {
@@ -189,7 +195,7 @@ public class ForgeEventHandler {
             shieldDamage.set((float) (totalDamage.get() * 0.75f));
             totalDamage.updateAndGet(v -> (v - shieldDamage.get()));
             finalDamage.set((float) (totalDamage.get() * 0.25f));
-            shieldDamage.set(shieldDamage.get()*2);
+            shieldDamage.set(shieldDamage.get() * 2);
             damageShield(hurtEntity, playerAtt, shieldDamage, s);
         } else if (s.hasShield()) {
             shieldDamage.set((float) (totalDamage.get() * 0.35f));
@@ -217,10 +223,11 @@ public class ForgeEventHandler {
     public static void doFinalHurt(LivingEntity attacker, LivingEntity hurtEntity, AtomicReference<Float> finalDamage) {
         if (Math.floor(finalDamage.get() * 10) / 10 <= 0) return;
         AtomicReference<String> damageStr = new AtomicReference<>(String.valueOf(Math.floor(finalDamage.get() * 10) / 10));
-        if(hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).resolve().isPresent()) {
+        if (hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).resolve().isPresent()) {
             hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
                 if (s.hasShield()) {
-                    damageStr.set("\uD83D\uDEE1" + damageStr);
+                    damageStr.set("" + damageStr);
+                    //🛡
                 }
             });
         }
@@ -268,8 +275,7 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof AbstractArrow abstractarrow) {
-            if (abstractarrow.isCritArrow()) {
-                Player player = (Player) abstractarrow.getOwner();
+            if (abstractarrow.isCritArrow() && abstractarrow.getOwner() instanceof Player player) {
                 abstractarrow.getCapability(ElementalArrowCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                     AttributeRegistry.DAMAGE_ATTRIBUTES.getEntries().forEach(entry -> {
                         if (player.getAttribute(entry.get()).getValue() > 0) {
@@ -288,23 +294,12 @@ public class ForgeEventHandler {
     }
 
     public static MutableComponent removeShieldFromName(Component name, String extension) {
-        return Component.literal(name.getString().replace(" + "+extension, "")).withStyle(name.getStyle());
+        return Component.literal(name.getString().replace(" +" + extension, "")).withStyle(name.getStyle());
     }
 
     @SubscribeEvent
     public static void entityTick(LivingEvent.LivingTickEvent event) {
-
-        event.getEntity().getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
-            String type = s.getShieldBreakType();
-            s.getShield().tick(event.getEntity());
-            if (s.hasShield() && event.getEntity().hasCustomName()) {
-                MutableComponent name = event.getEntity().getCustomName().toString().contains("+") ?
-                        removeShieldFromName(event.getEntity().getCustomName(), type) : (MutableComponent) event.getEntity().getCustomName();
-                event.getEntity().setCustomName(name.append(" ").append(Component.literal("+").withStyle(c -> c.withFont(Elemental.prefix("symbols")).withColor(0xFFFFFF))).append(" "+type));
-            } else if (!s.hasShield() && event.getEntity().hasCustomName()) {
-                event.getEntity().setCustomName(removeShieldFromName(event.getEntity().getCustomName(), type));
-            }
-        });
+        doShieldRename(event);
         if (event.getEntity().level.isClientSide) return;
         if (event.getEntity() instanceof Player) return;
         event.getEntity().getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(cap -> {
@@ -337,6 +332,20 @@ public class ForgeEventHandler {
             });
             toRemove.forEach(cap::removeMark);
             //}
+        });
+    }
+
+    private static void doShieldRename(LivingEvent.LivingTickEvent event) {
+        event.getEntity().getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
+            String type = SymbolHelper.getSymbol(s.getShieldBreakType());
+            s.getShield().tick(event.getEntity());
+            if (s.hasShield() && event.getEntity().hasCustomName()) {
+                MutableComponent name = event.getEntity().getCustomName().toString().contains("+") ?
+                        removeShieldFromName(event.getEntity().getCustomName(), type) : (MutableComponent) event.getEntity().getCustomName();
+                event.getEntity().setCustomName(name.append(" ").append(Component.literal("+").withStyle(c -> c.withFont(Elemental.prefix("symbols")).withColor(0xFFFFFF))).append(Component.literal(type).withStyle(c -> c.withFont(Elemental.prefix("symbols")).withColor(0xFFFFFF))));
+            } else if (!s.hasShield() && event.getEntity().hasCustomName()) {
+                event.getEntity().setCustomName(removeShieldFromName(event.getEntity().getCustomName(), type));
+            }
         });
     }
 

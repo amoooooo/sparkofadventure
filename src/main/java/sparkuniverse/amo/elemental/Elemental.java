@@ -16,6 +16,7 @@ import sparkuniverse.amo.elemental.net.PacketHandler;
 import sparkuniverse.amo.elemental.reactions.effects.LastingEffectMap;
 import sparkuniverse.amo.elemental.reactions.effects.particle.ParticleRegistry;
 import sparkuniverse.amo.elemental.util.ColorHelper;
+import sparkuniverse.amo.elemental.util.SymbolHelper;
 
 import java.util.Random;
 
@@ -50,6 +51,7 @@ public class Elemental {
         ENTITY_TYPES.register(modEventBus);
         PacketHandler.init();
         ParticleRegistry.register(modEventBus);
+        SymbolHelper.init();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ElementalClient.onCtorClient(modEventBus, forgeEventBus);
         });

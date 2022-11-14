@@ -8,20 +8,20 @@ import java.util.Map;
 public class ColorHelper {
     public static Map<String, Integer> typeColorMap = new HashMap<>();
     public static void init(){
-        typeColorMap.put("fire", 0xea8c15);
-        typeColorMap.put("cold", 0xCFFFFA);
-        typeColorMap.put("lightning", 0xB08FC2);
-        typeColorMap.put("poison", 0x00b029);
-        typeColorMap.put("water", 0x4bc3f1);
-        typeColorMap.put("earth", 0xfab632);
-        typeColorMap.put("air", 0x74c2a8);
-        typeColorMap.put("acid", 0xfc4e03);
-        typeColorMap.put("necrotic", 0x343A45);
-        typeColorMap.put("radiant", 0xF0E797);
-        typeColorMap.put("psychic", 0xE477F7);
-        typeColorMap.put("force", 0x9B77F7);
-        typeColorMap.put("thunder", 0x77C0F7);
-        typeColorMap.put("nature", 0x98b73d);
+        typeColorMap.put("fire", 0xFB7E00);
+        typeColorMap.put("cold", 0xFFFFFF);
+        typeColorMap.put("lightning", 0xF3C520);
+        typeColorMap.put("poison", 0x8EC62B);
+        typeColorMap.put("water", 0x40C6FF);
+        typeColorMap.put("earth", 0x7E6048);
+        typeColorMap.put("air", 0xBEE9E7);
+        typeColorMap.put("acid", 0xCB5112);
+        typeColorMap.put("necrotic", 0x623E4C);
+        typeColorMap.put("radiant", 0xFFFE8D);
+        typeColorMap.put("psychic", 0x904CAB);
+        typeColorMap.put("force", 0xFFB2F6);
+        typeColorMap.put("thunder", 0xD877F0);
+        typeColorMap.put("nature", 0x70922D);
     }
 
     public static int getColor(String type){

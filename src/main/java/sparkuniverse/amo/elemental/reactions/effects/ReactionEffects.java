@@ -47,7 +47,6 @@ public class ReactionEffects {
             .addAttributeModifier(Attributes.ARMOR_TOUGHNESS, "a4bcdb9d-c9ff-479e-b07c-01c8d1942304", 0.6D, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 
-    public static final RegistryObject<MobEffect> FIRE_RESISTANCE = EFFECTS.register("fire_resistance", () -> new ExtendedMobEffect(MobEffectCategory.BENEFICIAL, 0xFF0000).addAttributeModifier(AttributeRegistry.FIRE_RESISTANCE.get(), "de7c4c83-cfcf-4dce-9adc-deee2f8407ee", 1.25f, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<MobEffect> WATER_RESISTANCE = EFFECTS.register("water_resistance", () -> new ExtendedMobEffect(MobEffectCategory.BENEFICIAL, 0x0000FF).addAttributeModifier(AttributeRegistry.WATER_RESISTANCE.get(), "18cca568-9c22-4a3b-8745-05000debc774", 1.25f, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<MobEffect> NATURE_RESISTANCE = EFFECTS.register("nature_resistance", () -> new ExtendedMobEffect(MobEffectCategory.BENEFICIAL, 0x00FF00).addAttributeModifier(AttributeRegistry.NATURE_RESISTANCE.get(), "e58156b1-e31f-446d-a8f3-632388511d10", 1.25f, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<MobEffect> LIGHTNING_RESISTANCE = EFFECTS.register("lightning_resistance", () -> new ExtendedMobEffect(MobEffectCategory.BENEFICIAL, 0xFFFF00).addAttributeModifier(AttributeRegistry.LIGHTNING_RESISTANCE.get(), "c6b7d7d0-73ee-4bff-9bfe-337aa0ad56c4", 1.25f, AttributeModifier.Operation.MULTIPLY_TOTAL));

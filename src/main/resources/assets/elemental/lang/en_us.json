@@ -120,5 +120,19 @@
   "elemental:radiant_reaction_up": "Radiant Reaction Up",
   "elemental:necrotic_reaction_up": "Necrotic Reaction Up",
   "elemental:poison_reaction_up": "Poison Reaction Up",
-  "elemental:cold_reaction_up": "Cold Reaction Up"
+  "elemental:cold_reaction_up": "Cold Reaction Up",
+  "effect.elemental.cold_resistance": "Cold Resistance",
+  "effect.elemental.fire_resistance": "Fire Resistance",
+  "effect.elemental.water_resistance": "Water Resistance",
+  "effect.elemental.air_resistance": "Air Resistance",
+  "effect.elemental.earth_resistance": "Earth Resistance",
+  "effect.elemental.nature_resistance": "Nature Resistance",
+  "effect.elemental.lightning_resistance": "Lightning Resistance",
+  "effect.elemental.thunder_resistance": "Thunder Resistance",
+  "effect.elemental.psychic_resistance": "Psychic Resistance",
+  "effect.elemental.force_resistance": "Force Resistance",
+  "effect.elemental.radiant_resistance": "Radiant Resistance",
+  "effect.elemental.necrotic_resistance": "Necrotic Resistance",
+  "effect.elemental.poison_resistance": "Poison Resistance",
+  "effect.elemental.acid_resistance": "Acid Resistance"
 }

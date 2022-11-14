@@ -7,6 +7,118 @@
       "chars": [
         "+"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/fire.png",
+        "ascent": 8,
+        "chars": [
+            "A"
+        ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/cold.png",
+      "ascent": 8,
+      "chars": [
+        "B"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/lightning.png",
+      "ascent": 8,
+      "chars": [
+        "C"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/poison.png",
+      "ascent": 8,
+      "chars": [
+        "D"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/acid.png",
+      "ascent": 8,
+      "chars": [
+        "E"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/necrotic.png",
+      "ascent": 8,
+      "chars": [
+        "F"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/radiant.png",
+      "ascent": 8,
+      "chars": [
+        "G"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/force.png",
+      "ascent": 8,
+      "chars": [
+        "H"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/psychic.png",
+      "ascent": 8,
+      "chars": [
+        "I"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/thunder.png",
+      "ascent": 8,
+      "chars": [
+        "J"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/air.png",
+      "ascent": 8,
+      "chars": [
+        "K"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/earth.png",
+      "ascent": 8,
+      "chars": [
+        "L"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/water.png",
+      "ascent": 8,
+      "chars": [
+        "M"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "elemental:font/nature.png",
+      "ascent": 8,
+      "chars": [
+        "N"
+      ]
     }
   ]
 }

@@ -42,10 +42,10 @@ public class ReactionRegistry {
             float dmg = (float) (player.getAttributeValue(Apoth.Attributes.FIRE_DAMAGE.get()) + player.getAttributeValue(Apoth.Attributes.COLD_DAMAGE.get())  + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()  + player.getAttribute(AttributeRegistry.COLD_REACTION_UP.get()).getValue());
             float dmgPostCalc = (float) ((dmg * 2) * ((entity.getAttribute(AttributeRegistry.FIRE_RESISTANCE.get()).getValue()/100 * entity.getAttribute(AttributeRegistry.COLD_RESISTANCE.get()).getValue()/100)));
             entity.hurt(DamageSource.MAGIC, dmgPostCalc);
-            ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, 0xd57239, entity.level);
-            ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.FROZEN.get().getColor(), entity.level);
+            ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, ColorHelper.getColor("fire"), entity.level);
+            ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("cold"), entity.level);
         }
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Melt!", 0xd57239));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Melt!", ColorHelper.getColor("fire")));
         return true;
     }));
 
@@ -59,16 +59,16 @@ public class ReactionRegistry {
                 e.hurt(DamageSource.MAGIC, dmgPostCalc);
                 ((LivingEntity) e).addEffect(new MobEffectInstance(ReactionEffects.BURNING.get(), 100, 2));
                 if(entity instanceof NatureCoreEntity) {
-                    ParticleHelper.particleCircle(entity.getX(), entity.getY()+0.5, entity.getZ(), 150, 0.5, 5, 0xd57239, entity.level);
-                    ParticleHelper.particleCircle(entity.getX(), entity.getY()+0.5, entity.getZ(), 150, 0.5, 5, 0x98b73d, entity.level);
+                    ParticleHelper.particleCircle(entity.getX(), entity.getY()+0.5, entity.getZ(), 150, 0.5, 5, ColorHelper.getColor("fire"), entity.level);
+                    ParticleHelper.particleCircle(entity.getX(), entity.getY()+0.5, entity.getZ(), 150, 0.5, 5, ColorHelper.getColor("nature"), entity.level);
                     level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.AMBIENT, 1, 0.65F);
                     e.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(s -> {
                         if(!s.hasMark(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()))
                             s.addMark(player.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getAttribute().getDescriptionId());
                     });
                 } else {
-                    ParticleHelper.particleCircle(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, 0xd57239, entity.level);
-                    ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 2, 0x98b73d, entity.level);
+                    ParticleHelper.particleCircle(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, ColorHelper.getColor("fire"), entity.level);
+                    ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 2, ColorHelper.getColor("nature"), entity.level);
                     e.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(s -> {
                         if(!s.hasMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId()))
                             s.addMark(player.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getAttribute().getDescriptionId());
@@ -84,11 +84,11 @@ public class ReactionRegistry {
         if(player.getAttributes().hasAttribute(Apoth.Attributes.FIRE_DAMAGE.get()) && player.getAttributes().hasAttribute(AttributeRegistry.WATER_DAMAGE.get())){
             float dmg = (float) ((player.getAttributeValue(Apoth.Attributes.FIRE_DAMAGE.get()) + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()) + (player.getAttributeValue(AttributeRegistry.WATER_DAMAGE.get()) + player.getAttribute(AttributeRegistry.WATER_REACTION_UP.get()).getValue()));
             float dmgPostCalc = (float) ((dmg * 2) * ((entity.getAttribute(AttributeRegistry.FIRE_RESISTANCE.get()).getValue()/100 + entity.getAttribute(AttributeRegistry.WATER_RESISTANCE.get()).getValue()/100)));
-            ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, 0xd57239, entity.level);
-            ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 2, 1, 0x4bc3f1, entity.level);
+            ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, ColorHelper.getColor("fire"), entity.level);
+            ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 2, 1, ColorHelper.getColor("water"), entity.level);
             entity.hurt(DamageSource.MAGIC, dmgPostCalc);
         }
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Vaporize!", 0x4bc3f1));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Vaporize!", ColorHelper.getColor("water")));
         return true;
     }));
 
@@ -106,12 +106,12 @@ public class ReactionRegistry {
                 Vec3 knockback = e.position().subtract(entity.position()).normalize();
                 e.setDeltaMovement(e.getDeltaMovement().add(knockback));
                 e.setSecondsOnFire(1);
-                ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 2, 3, 0xd57239, entity.level);
-                ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 2, 3, ReactionEffects.ELECTROCHARGED.get().getColor(), entity.level);
+                ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 2, 3, ColorHelper.getColor("fire"), entity.level);
+                ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 2, 3, ColorHelper.getColor("lightning"), entity.level);
             }
         });
         level.explode(entity, entity.getX(), entity.getY(), entity.getZ(), 0, Explosion.BlockInteraction.NONE);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Overloaded!", ReactionEffects.ELECTROCHARGED.get().getColor()));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Overloaded!", ColorHelper.getColor("lightning")));
         return true;
     }));
 
@@ -125,17 +125,17 @@ public class ReactionRegistry {
 
     public static Reaction WATER_LIGHTNING = registerReaction(new Reaction(new Pair<>(AttributeRegistry.WATER_DAMAGE, AttributeRegistry.LIGHTNING_DAMAGE), 1.5, (entity, player, damage) -> {
         entity.addEffect(new MobEffectInstance(ReactionEffects.ELECTROCHARGED.get(), 200));
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.ELECTROCHARGED.get().getColor(), entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("lightning"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Electrocharged!", ReactionEffects.ELECTROCHARGED.get().getColor()));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Electrocharged!", ColorHelper.getColor("lightning")));
         return true;
     }));
 
     public static Reaction NATURE_LIGHTNING = registerReaction(new Reaction(new Pair<>(AttributeRegistry.NATURE_DAMAGE, AttributeRegistry.LIGHTNING_DAMAGE), 1.5, (entity, player, damage) -> {
         entity.addEffect(new MobEffectInstance(ReactionEffects.QUICKEN.get(), 200));
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.QUICKEN.get().getColor(), entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("nature"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Quicken!", ReactionEffects.QUICKEN.get().getColor()));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Quicken!", ColorHelper.getColor("nature")));
         return true;
     }));
 
@@ -143,10 +143,10 @@ public class ReactionRegistry {
         entity.addEffect(new MobEffectInstance(ReactionEffects.FROZEN.get(), 120));
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ReactionEffects.FROZEN.get().getDescriptionId(), 120, 0, false, false, false));
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 127));
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.FROZEN.get().getColor(), entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("cold"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1, 0.45f);
         entity.setTicksFrozen(600);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Frozen!", ReactionEffects.FROZEN.get().getColor()));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Frozen!", ColorHelper.getColor("cold")));
         return true;
     }));
 
@@ -169,9 +169,9 @@ public class ReactionRegistry {
             e.invulnerableTime = 0;
             ((LivingEntity) e).addEffect(new MobEffectInstance(Apoth.Effects.SUNDERING.get(), 200));
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.ELECTROCHARGED.get().getColor(), entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("lightning"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Superconduct!", ReactionEffects.ELECTROCHARGED.get().getColor()));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Superconduct!", ColorHelper.getColor("lightning")));
         return true;
     }));
 
@@ -183,9 +183,9 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -197,9 +197,9 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.NATURE_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -211,9 +211,9 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.LIGHTNING_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -225,10 +225,10 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.WATER_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
         if(entity != player)
-            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -240,10 +240,10 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.ACID_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
         if(entity != player)
-            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
 
         return true;
     }));
@@ -256,10 +256,10 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.POISON_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
         if(entity != player)
-            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -271,10 +271,10 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.NECROTIC_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
         if(entity != player)
-            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -286,10 +286,10 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.RADIANT_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
         if(entity != player)
-            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -301,10 +301,10 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.PSYCHIC_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
         if(entity != player)
-            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -316,10 +316,10 @@ public class ReactionRegistry {
             e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.THUNDER_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, 0x74c2a8, entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("air"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.STRAY_DEATH, SoundSource.PLAYERS, 1, 1.75f);
         if(entity != player)
-            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", 0x74c2a8));
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Swirl!", ColorHelper.getColor("air")));
         return true;
     }));
 
@@ -328,7 +328,7 @@ public class ReactionRegistry {
         entity.level.getEntities(null, entity.getBoundingBox().inflate(2)).forEach(e -> {
             if(e.equals(player)) return;
             if(!(e instanceof LivingEntity)) return;
-            e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.POISON_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.POISON_REACTION_UP.get()).getValue()));
+            e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.ACID_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.ACID_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
             ((LivingEntity) e).addEffect(new MobEffectInstance(ReactionEffects.RUSTING.get(), 200));
         });
@@ -341,7 +341,7 @@ public class ReactionRegistry {
     public static Reaction EARTH_FIRE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.EARTH_DAMAGE, Apoth.Attributes.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
         EarthCoreEntity core = new EarthCoreEntity(EntityRegistry.EARTH_CORE.get(), entity.level);
         core.setPlayer(player.getUUID());
-        core.setResistance(ReactionEffects.FIRE_RESISTANCE.get());
+        core.setResistance(ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.tryParse("minecraft:fire_resistance")));
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
         core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
@@ -481,9 +481,9 @@ public class ReactionRegistry {
             e.invulnerableTime = 0;
             ((LivingEntity) e).addEffect(new MobEffectInstance(ReactionEffects.DISSOLVE.get(), 200));
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.DISSOLVE.get().getColor(), entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("acid"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Dissolve!", ReactionEffects.DISSOLVE.get().getColor()));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Dissolve!", ColorHelper.getColor("acid")));
         return true;
     }));
 
@@ -496,9 +496,9 @@ public class ReactionRegistry {
             e.invulnerableTime = 0;
             ((LivingEntity) e).addEffect(new MobEffectInstance(ReactionEffects.DECAY.get(), 200));
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.DECAY.get().getColor(), entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("necrotic"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Decay!", ReactionEffects.DECAY.get().getColor()));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Decay!", ColorHelper.getColor("necrotic")));
         return true;
     }));
 
@@ -511,9 +511,9 @@ public class ReactionRegistry {
             e.invulnerableTime = 0;
             ((LivingEntity) e).addEffect(new MobEffectInstance(ReactionEffects.FRAZZLE.get(), 200));
         });
-        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ReactionEffects.FRAZZLE.get().getColor(), entity.level);
+        ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("psychic"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1, 1.75f);
-        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Frazzle!", ReactionEffects.FRAZZLE.get().getColor()));
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Frazzle!", ColorHelper.getColor("psychic")));
         return true;
     }));
 

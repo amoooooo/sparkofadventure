@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
+import shadows.apotheosis.Apoth;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
+import sparkuniverse.amo.elemental.damagetypes.TypedRangedAttribute;
+import sparkuniverse.amo.elemental.reactions.ReactionRegistry;
 import sparkuniverse.amo.elemental.reactions.capability.ReactionMarkCapabilityProvider;
 import sparkuniverse.amo.elemental.util.ColorHelper;
 import sparkuniverse.amo.elemental.util.ParticleHelper;
@@ -25,6 +29,7 @@ import sparkuniverse.amo.elemental.util.ParticleHelper;
 import java.util.List;
 
 import static net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY;
+import static sparkuniverse.amo.elemental.ForgeEventHandler.src;
 
 public class NatureCoreEntity extends Mob {
 
@@ -152,12 +157,15 @@ public class NatureCoreEntity extends Mob {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
-    public static void onNatureCoreAttack(Entity attacker, Entity target){
+    public static void onNatureCoreAttack(Entity attacker, Entity target, Attribute triggeringAttribute){
+        if(!(target instanceof NatureCoreEntity)) return;
+        NatureCoreEntity core = (NatureCoreEntity) target;
         if(attacker instanceof LivingEntity att){
-            if(att.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()) != null){
-                if(att.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()).getValue() > 0){
+            if(triggeringAttribute == AttributeRegistry.LIGHTNING_DAMAGE.get()){
 
-                }
+            }
+            if(triggeringAttribute == Apoth.Attributes.FIRE_DAMAGE.get()){
+                ReactionRegistry.BURGEON.applyReaction(core, att, att.getAttributeValue(triggeringAttribute));
             }
         }
     }
