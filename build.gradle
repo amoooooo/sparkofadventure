@@ -176,13 +176,15 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.19.2-43.1.47'
 
-    implementation fg.deobf("curse.maven:apotheosis-313970:4048780")
+    //implementation fg.deobf("curse.maven:apotheosis-313970:4048780")
     implementation fg.deobf("curse.maven:placebo-283644:4036338")
     implementation fg.deobf("curse.maven:obscure_api-638417:4069036")
     implementation fg.deobf("curse.maven:mhb-559894:3885595")
     implementation fg.deobf("curse.maven:better_combat-639842:4046670")
     implementation fg.deobf("curse.maven:cloth_config-348521:3972423")
     implementation fg.deobf("curse.maven:player_animator-658587:3987591")
+
+    implementation fg.deobf("curse.maven:attribution-703993:4089670")
 
 
     implementation fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.19.2:3.4.5.240")

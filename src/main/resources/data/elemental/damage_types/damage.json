@@ -1,0 +1,7 @@
+{
+  "mobs": {
+    "minecraft:husk": {
+      "elemental:fire_damage": 1.0
+    }
+  }
+}

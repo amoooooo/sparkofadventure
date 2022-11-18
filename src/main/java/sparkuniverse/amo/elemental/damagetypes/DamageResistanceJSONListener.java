@@ -16,17 +16,17 @@ import sparkuniverse.amo.elemental.Elemental;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DamageTypeJSONListener extends SimpleJsonResourceReloadListener {
+public class DamageResistanceJSONListener extends SimpleJsonResourceReloadListener {
 
     public static Map<EntityType<?>, Map<Attribute, Double>> attributeResistances = new HashMap<>();
     public static final Gson GSON = new Gson();
 
-    public DamageTypeJSONListener() {
+    public DamageResistanceJSONListener() {
         super(GSON, "damage_resistances");
     }
 
     public static void register(AddReloadListenerEvent event){
-        event.addListener(new DamageTypeJSONListener());
+        event.addListener(new DamageResistanceJSONListener());
     }
 
     @Override

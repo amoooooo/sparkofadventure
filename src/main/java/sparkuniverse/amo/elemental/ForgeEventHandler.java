@@ -6,16 +6,14 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -29,10 +27,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
-import shadows.apotheosis.Apoth;
+
 import sparkuniverse.amo.elemental.compat.bettercombat.BetterCombatCompat;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
-import sparkuniverse.amo.elemental.damagetypes.DamageTypeJSONListener;
+import sparkuniverse.amo.elemental.damagetypes.DamageResistanceJSONListener;
+import sparkuniverse.amo.elemental.damagetypes.EntityDamageTypeJSONListener;
 import sparkuniverse.amo.elemental.damagetypes.TypedRangedAttribute;
 import sparkuniverse.amo.elemental.damagetypes.shields.SelfShieldGoal;
 import sparkuniverse.amo.elemental.net.ClientBoundShieldPacket;
@@ -93,7 +92,7 @@ public class ForgeEventHandler {
                         return;
                     }
                 }
-                final Map<Attribute, Double> resistanceMap = DamageTypeJSONListener.attributeResistances.get(entityType);
+                final Map<Attribute, Double> resistanceMap = DamageResistanceJSONListener.attributeResistances.get(entityType);
                 Map<Attribute, Double> newResMap = new HashMap<>();
                 for (RegistryObject<Attribute> attr : RESISTANCE_ATTRIBUTES.getEntries()) {
                     if (resistanceMap != null) {
@@ -120,7 +119,7 @@ public class ForgeEventHandler {
         double mobResistance = hurtEntity.getAttributeValue(attribute) / 100f;
         Attribute playerAtt = ((TypedRangedAttribute) attribute).getType().get();
         handleNatureCoreAttack(attacker, hurtEntity, playerAtt);
-        if (hurtEntity instanceof NatureCoreEntity && playerAtt != Apoth.Attributes.FIRE_DAMAGE.get())
+        if (hurtEntity instanceof NatureCoreEntity && playerAtt != AttributeRegistry.FIRE_DAMAGE.get())
             return;
         double attributeDamage = attacker.getAttributes().hasAttribute(playerAtt) ? attacker.getAttributeValue(playerAtt) : 0.0;
         if (attributeDamage * mobResistance == 0 && attributeDamage != 0) {
@@ -136,19 +135,19 @@ public class ForgeEventHandler {
     private static void handleNatureCoreAttack(LivingEntity attacker, LivingEntity hurtEntity, Attribute triggeringAtt) {
         NatureCoreEntity.onNatureCoreAttack(attacker, hurtEntity, triggeringAtt);
         if (hurtEntity.hasEffect(ReactionEffects.QUICKEN.get())) {
-            if (attacker.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getValue() > 0) {
+            if (attacker.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getValue() > 0 && triggeringAtt.equals(AttributeRegistry.NATURE_DAMAGE.get())) {
                 PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Spread!", ColorHelper.getColor(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())));
                 hurtEntity.addEffect(new MobEffectInstance(ReactionEffects.SPREAD.get(), 100, 1));
             }
-            if (attacker.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()).getValue() > 0) {
+            if (attacker.getAttribute(AttributeRegistry.LIGHTNING_DAMAGE.get()).getValue() > 0 && triggeringAtt.equals(AttributeRegistry.LIGHTNING_DAMAGE.get())) {
                 PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())), new ClientboundParticlePacket(hurtEntity.getId(), "Aggravate!", ColorHelper.getColor(AttributeRegistry.LIGHTNING_DAMAGE.get().getDescriptionId())));
                 hurtEntity.addEffect(new MobEffectInstance(ReactionEffects.AGGRAVATE.get(), 100, 1));
             }
-            if (attacker.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue() > 0) {
-                Reaction reaction = ReactionRegistry.getReaction(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId(), List.of(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
-                reaction.applyReaction(hurtEntity, attacker, attacker.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue());
+            if (attacker.getAttribute(AttributeRegistry.FIRE_DAMAGE.get()).getValue() > 0 && triggeringAtt.equals(AttributeRegistry.FIRE_DAMAGE.get())) {
+                Reaction reaction = ReactionRegistry.getReaction(AttributeRegistry.FIRE_DAMAGE.get().getDescriptionId(), List.of(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
+                reaction.applyReaction(hurtEntity, attacker, attacker.getAttribute(AttributeRegistry.FIRE_DAMAGE.get()).getValue());
             }
-            if (attacker.getAttribute(AttributeRegistry.WATER_DAMAGE.get()).getValue() > 0) {
+            if (attacker.getAttribute(AttributeRegistry.WATER_DAMAGE.get()).getValue() > 0 && triggeringAtt.equals(AttributeRegistry.WATER_DAMAGE.get())) {
                 Reaction reaction = ReactionRegistry.getReaction(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId(), List.of(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId()));
                 reaction.applyReaction(hurtEntity, attacker, attacker.getAttribute(AttributeRegistry.WATER_DAMAGE.get()).getValue());
             }
@@ -254,7 +253,8 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void onJsonListener(AddReloadListenerEvent event) {
-        DamageTypeJSONListener.register(event);
+        DamageResistanceJSONListener.register(event);
+        EntityDamageTypeJSONListener.register(event);
     }
 
 
@@ -262,9 +262,9 @@ public class ForgeEventHandler {
     public static void mobSpawn(final LivingSpawnEvent event) {
         if (event.getEntity().level.isClientSide) return;
 
-        if (DamageTypeJSONListener.attributeResistances.containsKey(event.getEntity().getType())) {
+        if (DamageResistanceJSONListener.attributeResistances.containsKey(event.getEntity().getType())) {
             final LivingEntity entity = event.getEntity();
-            final Map<Attribute, Double> attributeResistanceMap = DamageTypeJSONListener.attributeResistances.get(entity.getType());
+            final Map<Attribute, Double> attributeResistanceMap = DamageResistanceJSONListener.attributeResistances.get(entity.getType());
 
             for (Map.Entry<Attribute, Double> entry : attributeResistanceMap.entrySet()) {
                 entity.getAttribute(entry.getKey()).setBaseValue(entry.getValue());
@@ -274,6 +274,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent event) {
+        parseEntityDamageModifiers(event);
         if (event.getEntity() instanceof AbstractArrow abstractarrow) {
             if (abstractarrow.isCritArrow() && abstractarrow.getOwner() instanceof Player player) {
                 abstractarrow.getCapability(ElementalArrowCapabilityProvider.CAPABILITY).ifPresent(cap -> {
@@ -293,6 +294,19 @@ public class ForgeEventHandler {
         }
     }
 
+    private static void parseEntityDamageModifiers(EntityJoinLevelEvent event) {
+        if(EntityDamageTypeJSONListener.attributeDamageTypes.containsKey(event.getEntity().getType())){
+            final LivingEntity entity = (LivingEntity) event.getEntity();
+            final Map<Attribute, Double> attributeDamageMap = EntityDamageTypeJSONListener.attributeDamageTypes.get(entity.getType());
+            if(attributeDamageMap == null) return;
+            entity.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.0f);
+            for (Map.Entry<Attribute, Double> entry : attributeDamageMap.entrySet()) {
+                entity.getAttribute(entry.getKey()).addPermanentModifier(new AttributeModifier("BaseDamageBonus", entry.getValue(), AttributeModifier.Operation.ADDITION));
+                System.out.println("Added " + entry.getValue() + " to " + entry.getKey().getDescriptionId());
+            }
+        }
+    }
+
     public static MutableComponent removeShieldFromName(Component name, String extension) {
         return Component.literal(name.getString().replace(" +" + extension, "")).withStyle(name.getStyle());
     }
@@ -306,11 +320,11 @@ public class ForgeEventHandler {
             if (event.getEntity().isInWaterOrRain() && !cap.hasMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId())) {
                 cap.addMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId());
             }
-            if (event.getEntity().isOnFire() && !cap.hasMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId())) {
-                cap.addMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId());
+            if (event.getEntity().isOnFire() && !cap.hasMark(AttributeRegistry.FIRE_DAMAGE.get().getDescriptionId())) {
+                cap.addMark(AttributeRegistry.FIRE_DAMAGE.get().getDescriptionId());
             }
-            if ((event.getEntity().isInPowderSnow || event.getEntity().level.isRaining() && event.getEntity().level.getBiome(event.getEntity().blockPosition()).get().coldEnoughToSnow(event.getEntity().blockPosition())) && !cap.hasMark(Apoth.Attributes.COLD_DAMAGE.get().getDescriptionId())) {
-                cap.addMark(Apoth.Attributes.COLD_DAMAGE.get().getDescriptionId());
+            if ((event.getEntity().isInPowderSnow || event.getEntity().level.isRaining() && event.getEntity().level.getBiome(event.getEntity().blockPosition()).get().coldEnoughToSnow(event.getEntity().blockPosition())) && !cap.hasMark(AttributeRegistry.COLD_DAMAGE.get().getDescriptionId())) {
+                cap.addMark(AttributeRegistry.COLD_DAMAGE.get().getDescriptionId());
             }
             List<String> toRemove = new ArrayList<>();
             cap.getMarks().forEach(s -> {
@@ -325,7 +339,7 @@ public class ForgeEventHandler {
                 } else {
                     toRemove.add(s.getFirst());
                 }
-                LastingEffectMap.lastingEffectMap.get(s.getFirst()).accept(event.getEntity());
+                //LastingEffectMap.lastingEffectMap.get(s.getFirst()).accept(event.getEntity());
                 Color color = new Color(ColorHelper.getColor(s.getFirst()));
                 CubeParticleData particleData = new CubeParticleData(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 0.025f, 1, false);
                 event.getEntity().level.getServer().getLevel(event.getEntity().level.dimension()).sendParticles(particleData, event.getEntity().getX() + (event.getEntity().level.random.nextFloat() - 0.5), (event.getEntity().getEyeY() - (event.getEntity().getBbHeight() / 2)) + (event.getEntity().level.random.nextFloat() - 0.5), event.getEntity().getZ() + (event.getEntity().level.random.nextFloat() - 0.5), 3, 0, 0, 0, 0.1);

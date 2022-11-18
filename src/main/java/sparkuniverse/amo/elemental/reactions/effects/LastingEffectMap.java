@@ -7,7 +7,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import shadows.apotheosis.Apoth;
+
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
 import sparkuniverse.amo.elemental.reactions.capability.ReactionMarkCapabilityProvider;
 import sparkuniverse.amo.elemental.reactions.entity.NatureCoreEntity;
@@ -29,9 +29,9 @@ public class LastingEffectMap {
         });
         lastingEffectMap.put("elemental:earth_damage", (entity) -> {
         });
-        lastingEffectMap.put("apotheosis:fire_damage", (entity) -> {
+        lastingEffectMap.put("elemental:fire_damage", (entity) -> {
         });
-        lastingEffectMap.put("apotheosis:cold_damage", (entity) -> {
+        lastingEffectMap.put("elemental:cold_damage", (entity) -> {
             //entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 1));
             if(entity.level.random.nextFloat() > 0.959){
                 //entity.hurt(DamageSource.FREEZE, 0.25f);

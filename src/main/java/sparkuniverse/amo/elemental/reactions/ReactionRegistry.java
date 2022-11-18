@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
-import shadows.apotheosis.Apoth;
+
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
 import sparkuniverse.amo.elemental.net.ClientboundMobEffectPacket;
 import sparkuniverse.amo.elemental.net.ClientboundParticlePacket;
@@ -37,9 +37,9 @@ import java.util.List;
 public class ReactionRegistry {
     public static final List<Reaction> REACTIONS = new ArrayList<>();
 
-    public static Reaction FIRE_COLD = registerReaction(new Reaction(new Pair<>(Apoth.Attributes.FIRE_DAMAGE, Apoth.Attributes.COLD_DAMAGE), 1.5, (entity, player, damage) -> {
-        if(player.getAttributes().hasAttribute(Apoth.Attributes.FIRE_DAMAGE.get()) && player.getAttributes().hasAttribute(Apoth.Attributes.COLD_DAMAGE.get())){
-            float dmg = (float) (player.getAttributeValue(Apoth.Attributes.FIRE_DAMAGE.get()) + player.getAttributeValue(Apoth.Attributes.COLD_DAMAGE.get())  + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()  + player.getAttribute(AttributeRegistry.COLD_REACTION_UP.get()).getValue());
+    public static Reaction FIRE_COLD = registerReaction(new Reaction(new Pair<>(AttributeRegistry.FIRE_DAMAGE, AttributeRegistry.COLD_DAMAGE), 1.5, (entity, player, damage) -> {
+        if(player.getAttributes().hasAttribute(AttributeRegistry.FIRE_DAMAGE.get()) && player.getAttributes().hasAttribute(AttributeRegistry.COLD_DAMAGE.get())){
+            float dmg = (float) (player.getAttributeValue(AttributeRegistry.FIRE_DAMAGE.get()) + player.getAttributeValue(AttributeRegistry.COLD_DAMAGE.get())  + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()  + player.getAttribute(AttributeRegistry.COLD_REACTION_UP.get()).getValue());
             float dmgPostCalc = (float) ((dmg * 2) * ((entity.getAttribute(AttributeRegistry.FIRE_RESISTANCE.get()).getValue()/100 * entity.getAttribute(AttributeRegistry.COLD_RESISTANCE.get()).getValue()/100)));
             entity.hurt(DamageSource.MAGIC, dmgPostCalc);
             ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, ColorHelper.getColor("fire"), entity.level);
@@ -49,12 +49,12 @@ public class ReactionRegistry {
         return true;
     }));
 
-    public static Reaction NATURE_FIRE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.NATURE_DAMAGE, Apoth.Attributes.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
+    public static Reaction NATURE_FIRE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.NATURE_DAMAGE, AttributeRegistry.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
         Level level = entity.level;
         int radius = entity instanceof NatureCoreEntity ? 5 : 1;
         level.getEntities(null, entity.getBoundingBox().inflate(radius)).forEach(e -> {
             if(e instanceof LivingEntity && !e.equals(player)){
-                float dmg = (float) (player.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()  + player.getAttribute(AttributeRegistry.NATURE_REACTION_UP.get()).getValue());
+                float dmg = (float) (player.getAttribute(AttributeRegistry.FIRE_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()  + player.getAttribute(AttributeRegistry.NATURE_REACTION_UP.get()).getValue());
                 float dmgPostCalc = (float) (dmg * ((((LivingEntity) e).getAttribute(AttributeRegistry.FIRE_RESISTANCE.get()).getValue())/100));
                 e.hurt(DamageSource.MAGIC, dmgPostCalc);
                 ((LivingEntity) e).addEffect(new MobEffectInstance(ReactionEffects.BURNING.get(), 100, 2));
@@ -70,8 +70,8 @@ public class ReactionRegistry {
                     ParticleHelper.particleCircle(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, ColorHelper.getColor("fire"), entity.level);
                     ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 2, ColorHelper.getColor("nature"), entity.level);
                     e.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(s -> {
-                        if(!s.hasMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId()))
-                            s.addMark(player.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getAttribute().getDescriptionId());
+                        if(!s.hasMark(AttributeRegistry.FIRE_DAMAGE.get().getDescriptionId()))
+                            s.addMark(player.getAttribute(AttributeRegistry.FIRE_DAMAGE.get()).getAttribute().getDescriptionId());
                     });
                 }
             }
@@ -80,9 +80,9 @@ public class ReactionRegistry {
         return true;
     }));
 
-    public static Reaction FIRE_WATER = registerReaction(new Reaction(new Pair<>(Apoth.Attributes.FIRE_DAMAGE, AttributeRegistry.WATER_DAMAGE), 1.5, (entity, player, damage) -> {
-        if(player.getAttributes().hasAttribute(Apoth.Attributes.FIRE_DAMAGE.get()) && player.getAttributes().hasAttribute(AttributeRegistry.WATER_DAMAGE.get())){
-            float dmg = (float) ((player.getAttributeValue(Apoth.Attributes.FIRE_DAMAGE.get()) + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()) + (player.getAttributeValue(AttributeRegistry.WATER_DAMAGE.get()) + player.getAttribute(AttributeRegistry.WATER_REACTION_UP.get()).getValue()));
+    public static Reaction FIRE_WATER = registerReaction(new Reaction(new Pair<>(AttributeRegistry.FIRE_DAMAGE, AttributeRegistry.WATER_DAMAGE), 1.5, (entity, player, damage) -> {
+        if(player.getAttributes().hasAttribute(AttributeRegistry.FIRE_DAMAGE.get()) && player.getAttributes().hasAttribute(AttributeRegistry.WATER_DAMAGE.get())){
+            float dmg = (float) ((player.getAttributeValue(AttributeRegistry.FIRE_DAMAGE.get()) + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()) + (player.getAttributeValue(AttributeRegistry.WATER_DAMAGE.get()) + player.getAttribute(AttributeRegistry.WATER_REACTION_UP.get()).getValue()));
             float dmgPostCalc = (float) ((dmg * 2) * ((entity.getAttribute(AttributeRegistry.FIRE_RESISTANCE.get()).getValue()/100 + entity.getAttribute(AttributeRegistry.WATER_RESISTANCE.get()).getValue()/100)));
             ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 1, 1.75f, ColorHelper.getColor("fire"), entity.level);
             ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 2, 1, ColorHelper.getColor("water"), entity.level);
@@ -92,15 +92,15 @@ public class ReactionRegistry {
         return true;
     }));
 
-    public static Reaction FIRE_LIGHTNING = registerReaction(new Reaction(new Pair<>(AttributeRegistry.LIGHTNING_DAMAGE, Apoth.Attributes.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
+    public static Reaction FIRE_LIGHTNING = registerReaction(new Reaction(new Pair<>(AttributeRegistry.LIGHTNING_DAMAGE, AttributeRegistry.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
         Level level = entity.level;
         level.getEntities(null, entity.getBoundingBox().inflate(2)).forEach(e -> {
             if(e instanceof LivingEntity && !e.equals(player)){
-                float dmg = (float) (player.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()  + player.getAttribute(AttributeRegistry.LIGHTNING_REACTION_UP.get()).getValue());
+                float dmg = (float) (player.getAttribute(AttributeRegistry.FIRE_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()  + player.getAttribute(AttributeRegistry.LIGHTNING_REACTION_UP.get()).getValue());
                 float dmgPostCalc = (float) (dmg * ((((LivingEntity) e).getAttribute(AttributeRegistry.FIRE_RESISTANCE.get()).getValue())/100));
                 e.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(s -> {
-                    if(!s.hasMark(Apoth.Attributes.FIRE_DAMAGE.get().getDescriptionId()))
-                        s.addMark(player.getAttribute(Apoth.Attributes.FIRE_DAMAGE.get()).getAttribute().getDescriptionId());
+                    if(!s.hasMark(AttributeRegistry.FIRE_DAMAGE.get().getDescriptionId()))
+                        s.addMark(player.getAttribute(AttributeRegistry.FIRE_DAMAGE.get()).getAttribute().getDescriptionId());
                 });
                 e.hurt(DamageSource.MAGIC, dmgPostCalc);
                 Vec3 knockback = e.position().subtract(entity.position()).normalize();
@@ -139,7 +139,7 @@ public class ReactionRegistry {
         return true;
     }));
 
-    public static Reaction WATER_COLD = registerReaction(new Reaction(new Pair<>(AttributeRegistry.WATER_DAMAGE, Apoth.Attributes.COLD_DAMAGE), 1.5, (entity, player, damage) -> {
+    public static Reaction WATER_COLD = registerReaction(new Reaction(new Pair<>(AttributeRegistry.WATER_DAMAGE, AttributeRegistry.COLD_DAMAGE), 1.5, (entity, player, damage) -> {
         entity.addEffect(new MobEffectInstance(ReactionEffects.FROZEN.get(), 120));
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ReactionEffects.FROZEN.get().getDescriptionId(), 120, 0, false, false, false));
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 127));
@@ -160,14 +160,14 @@ public class ReactionRegistry {
         return true;
     }));
 
-    public static Reaction COLD_LIGHTNING = registerReaction(new Reaction(new Pair<>(Apoth.Attributes.COLD_DAMAGE, AttributeRegistry.LIGHTNING_DAMAGE), 1.5, (entity, player, damage) -> {
-        entity.addEffect(new MobEffectInstance(Apoth.Effects.SUNDERING.get(), 200));
+    public static Reaction COLD_LIGHTNING = registerReaction(new Reaction(new Pair<>(AttributeRegistry.COLD_DAMAGE, AttributeRegistry.LIGHTNING_DAMAGE), 1.5, (entity, player, damage) -> {
+        entity.addEffect(new MobEffectInstance(ReactionEffects.DISSOLVE.get(), 200));
         entity.level.getEntities(null, entity.getBoundingBox().inflate(2)).forEach(e -> {
             if(e.equals(player)) return;
             if(!(e instanceof LivingEntity)) return;
-            e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(Apoth.Attributes.COLD_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.COLD_REACTION_UP.get()).getValue()));
+            e.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.COLD_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.COLD_REACTION_UP.get()).getValue()));
             e.invulnerableTime = 0;
-            ((LivingEntity) e).addEffect(new MobEffectInstance(Apoth.Effects.SUNDERING.get(), 200));
+            ((LivingEntity) e).addEffect(new MobEffectInstance(ReactionEffects.DISSOLVE.get(), 200));
         });
         ParticleHelper.particleBurst(entity.getX(), entity.getY()+1, entity.getZ(), 100, 0.75, 2, ColorHelper.getColor("lightning"), entity.level);
         entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1, 1.75f);
@@ -175,7 +175,7 @@ public class ReactionRegistry {
         return true;
     }));
 
-    public static Reaction AIR_FIRE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.AIR_DAMAGE, Apoth.Attributes.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
+    public static Reaction AIR_FIRE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.AIR_DAMAGE, AttributeRegistry.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
         entity.hurt(DamageSource.MAGIC, (float) (player.getAttribute(AttributeRegistry.AIR_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.FIRE_REACTION_UP.get()).getValue()));
         entity.level.getEntities(null, entity.getBoundingBox().inflate(2.5)).forEach(e -> {
             if(e.equals(player)) return;
@@ -324,7 +324,7 @@ public class ReactionRegistry {
     }));
 
     public static Reaction WATER_ACID = registerReaction(new Reaction(new Pair<>(AttributeRegistry.WATER_DAMAGE, AttributeRegistry.ACID_DAMAGE), 1.5, (entity, player, damage) -> {
-        entity.addEffect(new MobEffectInstance(Apoth.Effects.SUNDERING.get(), 200));
+        entity.addEffect(new MobEffectInstance(ReactionEffects.RUSTING.get(), 200));
         entity.level.getEntities(null, entity.getBoundingBox().inflate(2)).forEach(e -> {
             if(e.equals(player)) return;
             if(!(e instanceof LivingEntity)) return;
@@ -338,7 +338,7 @@ public class ReactionRegistry {
         return true;
     }));
 
-    public static Reaction EARTH_FIRE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.EARTH_DAMAGE, Apoth.Attributes.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
+    public static Reaction EARTH_FIRE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.EARTH_DAMAGE, AttributeRegistry.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
         EarthCoreEntity core = new EarthCoreEntity(EntityRegistry.EARTH_CORE.get(), entity.level);
         core.setPlayer(player.getUUID());
         core.setResistance(ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.tryParse("minecraft:fire_resistance")));
@@ -351,7 +351,7 @@ public class ReactionRegistry {
 
     // Do the same as above but for the other elements
 
-    public static Reaction EARTH_COLD = registerReaction(new Reaction(new Pair<>(AttributeRegistry.EARTH_DAMAGE, Apoth.Attributes.COLD_DAMAGE), 1.5, (entity, player, damage) -> {
+    public static Reaction EARTH_COLD = registerReaction(new Reaction(new Pair<>(AttributeRegistry.EARTH_DAMAGE, AttributeRegistry.COLD_DAMAGE), 1.5, (entity, player, damage) -> {
         EarthCoreEntity core = new EarthCoreEntity(EntityRegistry.EARTH_CORE.get(), entity.level);
         core.setPlayer(player.getUUID());
         core.setResistance(ReactionEffects.COLD_RESISTANCE.get());
@@ -522,7 +522,7 @@ public class ReactionRegistry {
         return true;
     });
 
-    public static Reaction BURGEON = new Reaction(new Pair<>(AttributeRegistry.NATURE_DAMAGE, Apoth.Attributes.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
+    public static Reaction BURGEON = new Reaction(new Pair<>(AttributeRegistry.NATURE_DAMAGE, AttributeRegistry.FIRE_DAMAGE), 1.5, (entity, player, damage) -> {
         entity.level.getEntities(null, entity.getBoundingBox().inflate(2)).forEach(e -> {
             if(!(e instanceof LivingEntity)) return;
             float dmg = (float) (player.getAttribute(AttributeRegistry.NATURE_DAMAGE.get()).getValue() + player.getAttribute(AttributeRegistry.NATURE_REACTION_UP.get()).getValue());

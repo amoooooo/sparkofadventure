@@ -18,7 +18,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
-import shadows.apotheosis.Apoth;
+
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
 import sparkuniverse.amo.elemental.damagetypes.TypedRangedAttribute;
 import sparkuniverse.amo.elemental.reactions.ReactionRegistry;
@@ -164,7 +164,7 @@ public class NatureCoreEntity extends Mob {
             if(triggeringAttribute == AttributeRegistry.LIGHTNING_DAMAGE.get()){
 
             }
-            if(triggeringAttribute == Apoth.Attributes.FIRE_DAMAGE.get()){
+            if(triggeringAttribute == AttributeRegistry.FIRE_DAMAGE.get()){
                 ReactionRegistry.BURGEON.applyReaction(core, att, att.getAttributeValue(triggeringAttribute));
             }
         }
