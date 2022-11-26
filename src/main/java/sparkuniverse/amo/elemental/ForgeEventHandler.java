@@ -247,6 +247,7 @@ public class ForgeEventHandler {
             });
         }
         hurtEntity.hurt(src(attacker), finalDamage.get());
+        hurtEntity.invulnerableTime = 0;
         if(ModList.get().isLoaded("ars_nouveau") && attacker instanceof Player){
             if(SpellUtil.isPlayerHoldingCastable((Player) attacker)) return;
         }
