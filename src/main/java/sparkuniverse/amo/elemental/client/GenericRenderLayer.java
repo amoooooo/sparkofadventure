@@ -37,7 +37,7 @@ public class GenericRenderLayer<T extends LivingEntity, M extends EntityModel<T>
             entityModel.prepareMobModel(pLivingEntity, pLimbSwing, pLimbSwingAmount, pPartialTick);
             this.model.setupAnim(pLivingEntity, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
             VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.entityTranslucent(ICE));
-            entityModel.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, darkness, darkness, darkness, 1);
+            entityModel.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, darkness, darkness, darkness, 0.75f);
         }
     }
 }

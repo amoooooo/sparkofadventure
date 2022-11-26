@@ -9,7 +9,7 @@ public class ColorHelper {
     public static Map<String, Integer> typeColorMap = new HashMap<>();
     public static void init(){
         typeColorMap.put("fire", 0xFB7E00);
-        typeColorMap.put("cold", 0xFFFFFF);
+        typeColorMap.put("cold", 0xEEEEEE);
         typeColorMap.put("lightning", 0xF3C520);
         typeColorMap.put("poison", 0x8EC62B);
         typeColorMap.put("water", 0x40C6FF);

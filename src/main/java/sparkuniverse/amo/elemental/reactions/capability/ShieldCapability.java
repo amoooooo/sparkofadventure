@@ -31,9 +31,7 @@ public class ShieldCapability implements ShieldCapabilityHandler{
 
     @Override
     public void damageShield(float amount) {
-        System.out.println("Shield damaged by " + amount);
         shield.damage((int) amount);
-        System.out.println("Shield health is now " + shield.getHealth());
     }
 
     @Override

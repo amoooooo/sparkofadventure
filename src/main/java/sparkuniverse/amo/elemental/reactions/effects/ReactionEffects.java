@@ -3,21 +3,28 @@ package sparkuniverse.amo.elemental.reactions.effects;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
+import sparkuniverse.amo.elemental.net.ClientboundMobEffectPacket;
+import sparkuniverse.amo.elemental.net.PacketHandler;
 import sparkuniverse.amo.elemental.reactions.capability.ReactionMarkCapabilityProvider;
+import sparkuniverse.amo.elemental.util.ColorHelper;
 
 public class ReactionEffects {
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, "elemental");
 
-    public static final RegistryObject<MobEffect> ELECTROCHARGED = EFFECTS.register("electrocharged", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xB08FC2) {
+    public static final RegistryObject<MobEffect> ELECTROCHARGED = EFFECTS.register("electrocharged", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("lightning")) {
         @Override
-        public void applyEffectTick(LivingEntity entity, int amplifier) {
+        public void tick(LivingEntity entity, int amplifier) {
             entity.hurt(DamageSource.MAGIC, 0.25f * amplifier);
             entity.level.getEntities(null, entity.getBoundingBox().inflate(2)).forEach((entity1) -> {
                 if (entity1 instanceof LivingEntity) {
@@ -30,19 +37,32 @@ public class ReactionEffects {
             });
         }
     }.addAttributeModifier(AttributeRegistry.LIGHTNING_RESISTANCE.get(), "f3be1c96-5853-11ed-9b6a-0242ac120002", 0.6D, AttributeModifier.Operation.MULTIPLY_TOTAL));
-    public static final RegistryObject<MobEffect> AGGRAVATE = EFFECTS.register("aggravate", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xB08FC2).addAttributeModifier(AttributeRegistry.LIGHTNING_RESISTANCE.get(), "3f40b744-5973-11ed-9b6a-0242ac120002", 0.85D, AttributeModifier.Operation.MULTIPLY_TOTAL));
-    public static final RegistryObject<MobEffect> SPREAD = EFFECTS.register("spread", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0x98b73d).addAttributeModifier(AttributeRegistry.NATURE_RESISTANCE.get(), "f11470b2-5bb5-44f0-b051-1ff571588f70", 0.75D, AttributeModifier.Operation.MULTIPLY_TOTAL));
-    public static final RegistryObject<MobEffect> QUICKEN = EFFECTS.register("quicken", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0x98b73d));
-    public static final RegistryObject<MobEffect> FROZEN = EFFECTS.register("frozen", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xCFFFFA){
-    }.addAttributeModifier(Attributes.MOVEMENT_SPEED, "698d2af8-5876-11ed-9b6a-0242ac120002", 0D, AttributeModifier.Operation.MULTIPLY_TOTAL));
-    public static final RegistryObject<MobEffect> BURNING = EFFECTS.register("burning", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xFF0000) {
+    public static final RegistryObject<MobEffect> AGGRAVATE = EFFECTS.register("aggravate", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("nature")).addAttributeModifier(AttributeRegistry.LIGHTNING_RESISTANCE.get(), "3f40b744-5973-11ed-9b6a-0242ac120002", 0.85D, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    public static final RegistryObject<MobEffect> SPREAD = EFFECTS.register("spread", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("nature")).addAttributeModifier(AttributeRegistry.NATURE_RESISTANCE.get(), "f11470b2-5bb5-44f0-b051-1ff571588f70", 0.75D, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    public static final RegistryObject<MobEffect> QUICKEN = EFFECTS.register("quicken", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("nature")));
+    public static final RegistryObject<MobEffect> FROZEN = EFFECTS.register("frozen", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("cold")){
         @Override
-        public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
-            pLivingEntity.hurt(DamageSource.IN_FIRE, pAmplifier * 0.25f);
+        public void onApplication(@Nullable MobEffectInstance effectInstance, @Nullable Entity source, LivingEntity entity, int amplifier) {
+            super.onApplication(effectInstance, source, entity, amplifier);
+            if(entity.level.isClientSide)return;
+            PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect()).toString(), effectInstance.getDuration(), effectInstance.getAmplifier(), effectInstance.isAmbient(), false, effectInstance.showIcon(), false));
+        }
+
+        @Override
+        public void onRemoval(MobEffectInstance effectInstance, LivingEntity entity) {
+            super.onRemoval(effectInstance, entity);
+            if(entity.level.isClientSide)return;
+            PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect()).toString(), effectInstance.getDuration(), effectInstance.getAmplifier(), effectInstance.isAmbient(), false, effectInstance.showIcon(), true));
+        }
+    }.addAttributeModifier(Attributes.MOVEMENT_SPEED, "698d2af8-5876-11ed-9b6a-0242ac120002", 0D, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    public static final RegistryObject<MobEffect> BURNING = EFFECTS.register("burning", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("fire")) {
+        @Override
+        public void tick(LivingEntity pLivingEntity, int pAmplifier) {
+            pLivingEntity.hurt(DamageSource.MAGIC, pAmplifier * 0.25f);
             super.applyEffectTick(pLivingEntity, pAmplifier);
         }
     });
-    public static final RegistryObject<MobEffect> RUSTING = EFFECTS.register("rusting", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xfc4e03)
+    public static final RegistryObject<MobEffect> RUSTING = EFFECTS.register("rusting", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("acid"))
             .addAttributeModifier(Attributes.ARMOR, "4db4311e-4cbb-43ab-bd81-47f6c4e6186c", 0.6D, AttributeModifier.Operation.MULTIPLY_TOTAL)
             .addAttributeModifier(Attributes.ARMOR_TOUGHNESS, "a4bcdb9d-c9ff-479e-b07c-01c8d1942304", 0.6D, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
@@ -61,14 +81,14 @@ public class ReactionEffects {
     public static final RegistryObject<MobEffect> PSYCHIC_RESISTANCE = EFFECTS.register("psychic_resistance", () -> new ExtendedMobEffect(MobEffectCategory.BENEFICIAL, 0x00FF00).addAttributeModifier(AttributeRegistry.PSYCHIC_RESISTANCE.get(), "5078afd6-872b-43eb-b396-a9ecea4c53f2", 1.25f, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<MobEffect> THUNDER_RESISTANCE = EFFECTS.register("thunder_resistance", () -> new ExtendedMobEffect(MobEffectCategory.BENEFICIAL, 0x00FF00).addAttributeModifier(AttributeRegistry.THUNDER_RESISTANCE.get(), "aff01342-6c12-4b01-a82e-b1bac752a4d7", 1.25f, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-    public static final RegistryObject<MobEffect> DISSOLVE = EFFECTS.register("dissolve", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0xADD013).addAttributeModifier(Attributes.MAX_HEALTH, "dbf46622-3a2c-4ec0-9a33-d96070e29e51", 0.8f, AttributeModifier.Operation.MULTIPLY_TOTAL));
-    public static final RegistryObject<MobEffect> DECAY = EFFECTS.register("decay", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0x131313));
-    public static final RegistryObject<MobEffect> FRAZZLE = EFFECTS.register("frazzle", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, 0x131313) {
+    public static final RegistryObject<MobEffect> DISSOLVE = EFFECTS.register("dissolve", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("acid")).addAttributeModifier(Attributes.MAX_HEALTH, "dbf46622-3a2c-4ec0-9a33-d96070e29e51", -0.8f, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    public static final RegistryObject<MobEffect> DECAY = EFFECTS.register("decay", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("necrotic")));
+    public static final RegistryObject<MobEffect> FRAZZLE = EFFECTS.register("frazzle", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("psychic")) {
         @Override
-        public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
+        public void tick(LivingEntity pLivingEntity, int pAmplifier) {
             super.applyEffectTick(pLivingEntity, pAmplifier);
             if (pLivingEntity.level.random.nextFloat() > 0.5) {
-                double damage = pLivingEntity.getAttribute(AttributeRegistry.PSYCHIC_RESISTANCE.get()).getValue() * (0.5f * pAmplifier);
+                double damage = (pLivingEntity.getAttribute(AttributeRegistry.PSYCHIC_RESISTANCE.get()).getValue()/100f) * (0.5f * pAmplifier);
                 pLivingEntity.hurt(DamageSource.MAGIC, (float) damage);
             }
 

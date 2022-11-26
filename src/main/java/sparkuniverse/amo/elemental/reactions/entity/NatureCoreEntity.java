@@ -162,7 +162,7 @@ public class NatureCoreEntity extends Mob {
         NatureCoreEntity core = (NatureCoreEntity) target;
         if(attacker instanceof LivingEntity att){
             if(triggeringAttribute == AttributeRegistry.LIGHTNING_DAMAGE.get()){
-
+                ReactionRegistry.HYPERBLOOM.applyReaction(core, att, att.getAttributeValue(triggeringAttribute));
             }
             if(triggeringAttribute == AttributeRegistry.FIRE_DAMAGE.get()){
                 ReactionRegistry.BURGEON.applyReaction(core, att, att.getAttributeValue(triggeringAttribute));

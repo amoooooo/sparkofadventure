@@ -16,4 +16,6 @@ public interface ReactionMarkCapabilityHandler extends INBTSerializable<Compound
     int getMarkCount();
     boolean hasMark(String mark);
     List<Pair<String, Integer>> getMarks();
+
+    void tickMark(String s);
 }

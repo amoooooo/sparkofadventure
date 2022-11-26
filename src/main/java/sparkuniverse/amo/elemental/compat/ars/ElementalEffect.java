@@ -13,7 +13,9 @@ import sparkuniverse.amo.elemental.Elemental;
 import java.util.Set;
 
 public class ElementalEffect extends AbstractEffect {
-    public static final ElementalEffect FIRE = new ElementalEffect("fire_damage", "Fire");
+    public static final ElementalEffect FIRE = new ElementalEffect("fire_damage", "Fire"){
+
+    };
     public static final ElementalEffect WATER = new ElementalEffect("water_damage", "Water");
     public static final ElementalEffect EARTH = new ElementalEffect("earth_damage", "Earth");
     public static final ElementalEffect AIR = new ElementalEffect("air_damage", "Air");
@@ -35,20 +37,13 @@ public class ElementalEffect extends AbstractEffect {
 
     public String getElement() {
         String key = getRegistryName().toString();
-        if(key.contains("fire_damage") || key.contains("cold_damage")){
-            key = key.replace("ars_nouveau:", "apotheosis:");
-        } else {
-            key = key.replace("ars_nouveau:", "elemental:");
-        }
+        key = key.replace("ars_nouveau:", "elemental:");
         return key;
     }
 
     @Override
     public void onResolve(HitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         super.onResolve(rayTraceResult, world, shooter, spellStats, spellContext, resolver);
-        if(shooter instanceof Player p){
-            p.sendSystemMessage(Component.literal("Elemental Effect: " + getElement()));
-        }
     }
 
     @Override

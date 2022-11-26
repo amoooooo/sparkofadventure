@@ -106,8 +106,36 @@ minecraft {
             }
         }
 
+        client2 {
+            workingDirectory project.file('run2')
+
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            property 'forge.logging.markers', 'REGISTRIES'
+
+
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            property 'forge.logging.console.level', 'debug'
+
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            property 'forge.enabledGameTestNamespaces', 'elemental'
+
+            args '-username', 'Dev2'
+
+            mods {
+                elemental {
+                    source sourceSets.main
+                }
+            }
+        }
+
         server {
-            workingDirectory project.file('run')
+            workingDirectory project.file('runServer')
 
             property 'forge.logging.markers', 'REGISTRIES'
 
@@ -176,9 +204,9 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.19.2-43.1.47'
 
-    //implementation fg.deobf("curse.maven:apotheosis-313970:4048780")
+    implementation fg.deobf("curse.maven:apotheosis-313970:4048780")
     implementation fg.deobf("curse.maven:placebo-283644:4036338")
-    implementation fg.deobf("curse.maven:obscure_api-638417:4069036")
+    implementation fg.deobf("curse.maven:obscure_api-638417:4094568")
     implementation fg.deobf("curse.maven:mhb-559894:3885595")
     implementation fg.deobf("curse.maven:better_combat-639842:4046670")
     implementation fg.deobf("curse.maven:cloth_config-348521:3972423")
@@ -186,8 +214,10 @@ dependencies {
 
     implementation fg.deobf("curse.maven:attribution-703993:4089670")
 
+    implementation fg.deobf("curse.maven:tslateffectslib-700382:4077093")
 
-    implementation fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.19.2:3.4.5.240")
+
+    implementation fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.19.2:3.4.7.245")
 
     implementation fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
     implementation fg.deobf("mezz.jei:jei-1.19.2-forge:${jei_version}")

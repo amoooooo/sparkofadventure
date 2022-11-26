@@ -16,8 +16,9 @@ public class ClientboundMobEffectPacket {
     public final boolean ambient;
     public final boolean showParticles;
     public final boolean showIcon;
+    public final boolean remove;
 
-    public ClientboundMobEffectPacket(int uuid, String effect, int duration, int amplifier, boolean ambient, boolean showParticles, boolean showIcon) {
+    public ClientboundMobEffectPacket(int uuid, String effect, int duration, int amplifier, boolean ambient, boolean showParticles, boolean showIcon, boolean remove) {
         this.uuid = uuid;
         this.effect = effect;
         this.duration = duration;
@@ -25,6 +26,7 @@ public class ClientboundMobEffectPacket {
         this.ambient = ambient;
         this.showParticles = showParticles;
         this.showIcon = showIcon;
+        this.remove = remove;
     }
 
     public static void encode(ClientboundMobEffectPacket msg, FriendlyByteBuf buf) {
@@ -35,10 +37,11 @@ public class ClientboundMobEffectPacket {
         buf.writeBoolean(msg.ambient);
         buf.writeBoolean(msg.showParticles);
         buf.writeBoolean(msg.showIcon);
+        buf.writeBoolean(msg.remove);
     }
 
     public static ClientboundMobEffectPacket decode(FriendlyByteBuf buf) {
-        return new ClientboundMobEffectPacket(buf.readInt(), buf.readUtf(), buf.readInt(), buf.readInt(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
+        return new ClientboundMobEffectPacket(buf.readInt(), buf.readUtf(), buf.readInt(), buf.readInt(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
     }
 
     public static void handle(ClientboundMobEffectPacket msg, Supplier<NetworkEvent.Context> ctx) {

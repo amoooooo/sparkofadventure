@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ReactionMarkCapability implements ReactionMarkCapabilityHandler {
     private final List<Pair<String, Integer>> marks = new ArrayList<>();
+
     @Override
     public String getMark(int index) {
         return marks.get(index).getFirst();
@@ -52,6 +53,11 @@ public class ReactionMarkCapability implements ReactionMarkCapabilityHandler {
     @Override
     public List<Pair<String, Integer>> getMarks() {
         return marks;
+    }
+
+    @Override
+    public void tickMark(String s) {
+        marks.stream().filter(pair -> pair.getFirst().equals(s)).findFirst().ifPresent(pair -> pair.setSecond(pair.getSecond() + 1));
     }
 
     @Override

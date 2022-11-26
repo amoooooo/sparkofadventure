@@ -1,12 +1,13 @@
 package sparkuniverse.amo.elemental.reactions.effects.particle;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import sparkuniverse.amo.elemental.Elemental;
 
 public class TextParticle {
-    public String damage;
+    public Component damage;
     public int color;
 
     public double x = 0;
@@ -26,7 +27,7 @@ public class TextParticle {
     public double vy = 0;
     public double vz = 0;
 
-    public TextParticle(Entity entity, String damage, int color) {
+    public TextParticle(Entity entity, Component damage, int color) {
         Minecraft client = Minecraft.getInstance();
         Vec3 entityLocation = entity.position().add(0, entity.getBbHeight() / 2, 0);
         Vec3 cameraLocation = client.gameRenderer.getMainCamera().getPosition();

@@ -17,12 +17,4 @@ public class EntityRegistry {
     public static final RegistryObject<EntityType<NatureCoreEntity>> NATURE_CORE = ENTITY_TYPES.register("nature_core", () -> EntityType.Builder.of(NatureCoreEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).build("nature_core"));
     public static final RegistryObject<EntityType<EarthCoreEntity>> EARTH_CORE = ENTITY_TYPES.register("earth_core", () -> EntityType.Builder.of(EarthCoreEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).build("earth_core"));
 
-    @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class Client {
-        @SubscribeEvent
-        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(NATURE_CORE.get(), NatureCoreEntityRenderer::new);
-            event.registerEntityRenderer(EARTH_CORE.get(), EarthCoreEntityRenderer::new);
-        }
-    }
 }

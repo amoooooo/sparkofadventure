@@ -6,6 +6,7 @@
   "refmap": "elemental.refmap.json",
   "mixins": [
     "BowItemMixin",
+    "ForgeRegistryEventsMixin",
     "LightningBoltMixin",
     "MobEffectsMixin",
     "ThrownPotionMixin"

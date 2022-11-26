@@ -1,12 +1,13 @@
 package sparkuniverse.amo.elemental;
 
-import net.minecraft.client.Minecraft;
+import com.mojang.math.Matrix3f;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -14,13 +15,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -28,19 +29,20 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
+import sparkuniverse.amo.elemental.compat.ars.SpellUtil;
 import sparkuniverse.amo.elemental.compat.bettercombat.BetterCombatCompat;
+import sparkuniverse.amo.elemental.compat.obscureapi.ObscureAPICompatLayer;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
 import sparkuniverse.amo.elemental.damagetypes.DamageResistanceJSONListener;
 import sparkuniverse.amo.elemental.damagetypes.EntityDamageTypeJSONListener;
 import sparkuniverse.amo.elemental.damagetypes.TypedRangedAttribute;
-import sparkuniverse.amo.elemental.damagetypes.shields.SelfShieldGoal;
 import sparkuniverse.amo.elemental.net.ClientBoundShieldPacket;
+import sparkuniverse.amo.elemental.net.ClientboundMarkPacket;
 import sparkuniverse.amo.elemental.net.ClientboundParticlePacket;
 import sparkuniverse.amo.elemental.net.PacketHandler;
 import sparkuniverse.amo.elemental.reactions.Reaction;
 import sparkuniverse.amo.elemental.reactions.ReactionRegistry;
 import sparkuniverse.amo.elemental.reactions.capability.*;
-import sparkuniverse.amo.elemental.reactions.effects.LastingEffectMap;
 import sparkuniverse.amo.elemental.reactions.effects.ReactionEffects;
 import sparkuniverse.amo.elemental.reactions.effects.particle.CubeParticleData;
 import sparkuniverse.amo.elemental.reactions.effects.particle.ParticleRenderer;
@@ -59,10 +61,11 @@ import java.util.stream.Collectors;
 
 import static sparkuniverse.amo.elemental.damagetypes.AttributeRegistry.RESISTANCE_ATTRIBUTES;
 
+//fix up lang files, and add a config file
 @Mod.EventBusSubscriber(modid = Elemental.MODID)
 public class ForgeEventHandler {
 
-    private static boolean avoidSO;
+    public static boolean avoidSO;
 
     @SubscribeEvent
     public static void attackEvent(final LivingAttackEvent event) {
@@ -85,6 +88,11 @@ public class ForgeEventHandler {
             final LivingEntity hurtEntity = event.getEntity();
             final EntityType<?> entityType = event.getEntity().getType();
             AtomicReference<Float> finalDamage = new AtomicReference<>(event.getAmount());
+            float critMultiplier = 1;
+            if(ModList.get().isLoaded("obscure_api")){
+                critMultiplier = 1+ObscureAPICompatLayer.getObscureAPICritValue(attacker);
+            }
+            finalDamage.set(finalDamage.get() * critMultiplier);
             if (isCharged.get() || !(event.getSource().getDirectEntity() instanceof AbstractArrow)) {
                 if (ModList.get().isLoaded("bettercombat")) {
                     if (BetterCombatCompat.betterCombatComboCheck(event, attacker, hurtEntity, finalDamage, avoidSO).getFirst()) {
@@ -104,17 +112,21 @@ public class ForgeEventHandler {
                     }
                 }
                 for (Map.Entry<Attribute, Double> mapEntry : newResMap.entrySet()) {
-                    handleTypedDamage(attacker, hurtEntity, finalDamage, mapEntry);
+                    handleTypedDamage(attacker, hurtEntity, finalDamage, mapEntry, critMultiplier);
                 }
             }
             doFinalHurt(attacker, hurtEntity, finalDamage);
-            event.setCanceled(true);
+            if(ModList.get().isLoaded("ars_nouveau") && attacker instanceof Player){
+                event.setCanceled(SpellUtil.isPlayerHoldingCastable((Player) attacker));
+            } else {
+                event.setCanceled(true);
+            }
 
         }
         avoidSO = false;
     }
 
-    private static void handleTypedDamage(LivingEntity attacker, LivingEntity hurtEntity, AtomicReference<Float> finalDamage, Map.Entry<Attribute, Double> mapEntry) {
+    private static void handleTypedDamage(LivingEntity attacker, LivingEntity hurtEntity, AtomicReference<Float> finalDamage, Map.Entry<Attribute, Double> mapEntry, float critMult) {
         final Attribute attribute = mapEntry.getKey();
         double mobResistance = hurtEntity.getAttributeValue(attribute) / 100f;
         Attribute playerAtt = ((TypedRangedAttribute) attribute).getType().get();
@@ -128,7 +140,7 @@ public class ForgeEventHandler {
             }
         }
         if (attributeDamage > 0.001 && hurtEntity.getAttributes().hasAttribute(attribute)) {
-            handleTypedDamage(attacker, hurtEntity, finalDamage, mobResistance, playerAtt, attributeDamage);
+            handleTypedDamage(attacker, hurtEntity, finalDamage, mobResistance, playerAtt, attributeDamage, critMult);
         }
     }
 
@@ -154,8 +166,9 @@ public class ForgeEventHandler {
         }
     }
 
-    private static void handleTypedDamage(LivingEntity attacker, LivingEntity hurtEntity, AtomicReference<Float> finalDamage, double mobResistance, Attribute playerAtt, double attributeDamage) {
-        AtomicReference<Double> totalDamage = new AtomicReference<>(attributeDamage * mobResistance);
+    private static void handleTypedDamage(LivingEntity attacker, LivingEntity hurtEntity, AtomicReference<Float> finalDamage, double mobResistance, Attribute playerAtt, double attributeDamage, float critMult) {
+        float critDamage = (float) (attributeDamage * critMult);
+        AtomicReference<Double> totalDamage = new AtomicReference<>(critDamage * mobResistance);
         AtomicReference<Float> shieldDamage = new AtomicReference<>((float) 0);
         hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
             handleShieldReaction(hurtEntity, finalDamage, playerAtt, totalDamage, shieldDamage, s);
@@ -166,9 +179,9 @@ public class ForgeEventHandler {
                 new ClientboundParticlePacket(hurtEntity.getId(), "" + String.valueOf(Math.floor(visualDamage * 10) / 10), ColorHelper.getColor(playerAtt.getDescriptionId())));
         // 🛡
         if (mobResistance > 1) {
-            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.PLAYERS, 1.5f, 0.75f);
+            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.HOSTILE, 1.0f, 0.25f);
         } else if (mobResistance < 1) {
-            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 1.5f, 1.25f);
+            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 0.5f, 1.25f);
         }
         hurtEntity.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             handleDamageReaction(attacker, hurtEntity, playerAtt, attributeDamage, cap);
@@ -176,7 +189,7 @@ public class ForgeEventHandler {
         if (hurtEntity instanceof NatureCoreEntity ne) ne.remove(Entity.RemovalReason.DISCARDED);
     }
 
-    private static void handleDamageReaction(LivingEntity attacker, LivingEntity hurtEntity, Attribute playerAtt, double attributeDamage, ReactionMarkCapabilityHandler cap) {
+    public static void handleDamageReaction(LivingEntity attacker, LivingEntity hurtEntity, Attribute playerAtt, double attributeDamage, ReactionMarkCapabilityHandler cap) {
         if (!cap.hasMark(playerAtt.getDescriptionId())) {
             cap.addMark(playerAtt.getDescriptionId());
         }
@@ -186,21 +199,24 @@ public class ForgeEventHandler {
             cap.removeMark(playerAtt.getDescriptionId());
             cap.removeMark(reaction.getOther(playerAtt.getDescriptionId()));
         }
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> PacketDistributor.TargetPoint.p(
+                hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), 128, hurtEntity.level.dimension()
+        ).get()), new ClientboundMarkPacket(cap.serializeNBT(), hurtEntity.getId()));
     }
 
-    private static void handleShieldReaction(LivingEntity hurtEntity, AtomicReference<Float> finalDamage, Attribute playerAtt, AtomicReference<Double> totalDamage, AtomicReference<Float> shieldDamage, ShieldCapabilityHandler s) {
+    public static void handleShieldReaction(LivingEntity hurtEntity, AtomicReference<Float> finalDamage, Attribute playerAtt, AtomicReference<Double> totalDamage, AtomicReference<Float> shieldDamage, ShieldCapabilityHandler s) {
         Reaction reaction = ReactionRegistry.getReaction(playerAtt.getDescriptionId(), Collections.singletonList(s.getShieldBreakType()));
         if (reaction != null && s.hasShield()) {
             shieldDamage.set((float) (totalDamage.get() * 0.75f));
             totalDamage.updateAndGet(v -> (v - shieldDamage.get()));
             finalDamage.set((float) (totalDamage.get() * 0.25f));
             shieldDamage.set(shieldDamage.get() * 2);
-            damageShield(hurtEntity, playerAtt, shieldDamage, s);
+            //damageShield(hurtEntity, playerAtt, shieldDamage, s);
         } else if (s.hasShield()) {
             shieldDamage.set((float) (totalDamage.get() * 0.35f));
             totalDamage.updateAndGet(v -> (v - shieldDamage.get()));
             finalDamage.set((float) (totalDamage.get() * 0.65f));
-            damageShield(hurtEntity, playerAtt, shieldDamage, s);
+            //damageShield(hurtEntity, playerAtt, shieldDamage, s);
         }
     }
 
@@ -211,10 +227,10 @@ public class ForgeEventHandler {
             PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientBoundShieldPacket(0, shieldDamage.get(), true, hurtEntity.getId(), false, ""));
             PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())),
                     new ClientboundParticlePacket(hurtEntity.getId(), "Broken!", ColorHelper.getColor(playerAtt.getDescriptionId())));
-            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.PLAYERS, 2f, hurtEntity.level.random.nextFloat() * 0.1f);
+            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.HOSTILE, 2f, hurtEntity.level.random.nextFloat() * 0.1f);
         } else {
             PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientBoundShieldPacket(0, shieldDamage.get(), false, hurtEntity.getId(), false, ""));
-            //hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 1.0f, hurtEntity.level.random.nextFloat()+0.1f);
+            //hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SHIELD_BREAK, SoundSource.HOSTILE, 1.0f, hurtEntity.level.random.nextFloat()+0.1f);
         }
     }
 
@@ -230,14 +246,34 @@ public class ForgeEventHandler {
                 }
             });
         }
+        hurtEntity.hurt(src(attacker), finalDamage.get());
+        if(ModList.get().isLoaded("ars_nouveau") && attacker instanceof Player){
+            if(SpellUtil.isPlayerHoldingCastable((Player) attacker)) return;
+        }
         PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())),
                 new ClientboundParticlePacket(hurtEntity.getId(), damageStr.get(), Color.WHITE.getRGB()));
-        hurtEntity.hurt(src(attacker), finalDamage.get());
     }
 
     @SubscribeEvent
     public static void onPlayerAttack(AttackEntityEvent event) {
 
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onLivingHurt(LivingDamageEvent event){
+        LivingEntity hurtEntity = event.getEntity();
+        if(hurtEntity instanceof NatureCoreEntity) return;
+        if(event.getSource() instanceof EntityDamageSource) return;
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())),
+                new ClientboundParticlePacket(hurtEntity.getId(), ""+Math.ceil(event.getAmount()*100)/100, Color.RED.getRGB()));
+    }
+
+    @SubscribeEvent
+    public static void onLivingHeal(LivingHealEvent event){
+        LivingEntity hurtEntity = event.getEntity();
+        if(hurtEntity instanceof NatureCoreEntity) return;
+        PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())),
+                new ClientboundParticlePacket(hurtEntity.getId(), ""+Math.ceil(event.getAmount()*100)/100, Color.GREEN.getRGB()));
     }
 
     /**
@@ -276,7 +312,8 @@ public class ForgeEventHandler {
     public static void onEntityJoin(EntityJoinLevelEvent event) {
         parseEntityDamageModifiers(event);
         if (event.getEntity() instanceof AbstractArrow abstractarrow) {
-            if (abstractarrow.isCritArrow() && abstractarrow.getOwner() instanceof Player player) {
+            if (abstractarrow.isCritArrow() && abstractarrow.getOwner() instanceof Player|| (abstractarrow.getOwner() instanceof LivingEntity && !(abstractarrow.getOwner() instanceof Player))) {
+                LivingEntity player = (LivingEntity) abstractarrow.getOwner();
                 abstractarrow.getCapability(ElementalArrowCapabilityProvider.CAPABILITY).ifPresent(cap -> {
                     AttributeRegistry.DAMAGE_ATTRIBUTES.getEntries().forEach(entry -> {
                         if (player.getAttribute(entry.get()).getValue() > 0) {
@@ -289,7 +326,7 @@ public class ForgeEventHandler {
         if (event.getEntity().getPersistentData().contains("apoth.boss")) {
             Entity entity = event.getEntity();
             if (entity instanceof Mob le) {
-                le.goalSelector.addGoal(3, new SelfShieldGoal(le));
+                //le.goalSelector.addGoal(3, new SelfShieldGoal(le));
             }
         }
     }
@@ -302,7 +339,6 @@ public class ForgeEventHandler {
             entity.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.0f);
             for (Map.Entry<Attribute, Double> entry : attributeDamageMap.entrySet()) {
                 entity.getAttribute(entry.getKey()).addPermanentModifier(new AttributeModifier("BaseDamageBonus", entry.getValue(), AttributeModifier.Operation.ADDITION));
-                System.out.println("Added " + entry.getValue() + " to " + entry.getKey().getDescriptionId());
             }
         }
     }
@@ -315,7 +351,7 @@ public class ForgeEventHandler {
     public static void entityTick(LivingEvent.LivingTickEvent event) {
         doShieldRename(event);
         if (event.getEntity().level.isClientSide) return;
-        if (event.getEntity() instanceof Player) return;
+        //if (event.getEntity() instanceof Player) return;
         event.getEntity().getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if (event.getEntity().isInWaterOrRain() && !cap.hasMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId())) {
                 cap.addMark(AttributeRegistry.WATER_DAMAGE.get().getDescriptionId());
@@ -327,7 +363,9 @@ public class ForgeEventHandler {
                 cap.addMark(AttributeRegistry.COLD_DAMAGE.get().getDescriptionId());
             }
             List<String> toRemove = new ArrayList<>();
-            cap.getMarks().forEach(s -> {
+            List<String> toTick = new ArrayList<>();
+            for(int i = 0; i < cap.getMarks().size(); i++){
+                Pair<String, Integer> s = cap.getMarks().get(i);
                 Reaction r = ReactionRegistry.getReaction(s.getFirst(), cap.getMarks().stream().map(Pair::getFirst).collect(Collectors.toList()));
                 if (r != null && event.getEntity().getLastHurtByMob() != null && event.getEntity().level.getGameTime() % 10 == 0) {
                     r.applyReaction(event.getEntity(), event.getEntity().getLastHurtByMob(), 0);
@@ -337,15 +375,18 @@ public class ForgeEventHandler {
                 if (s.getSecond() < 100) {
                     s.setSecond(s.getSecond() + 1);
                 } else {
-                    toRemove.add(s.getFirst());
+                    cap.removeMark(s.getFirst());
                 }
                 //LastingEffectMap.lastingEffectMap.get(s.getFirst()).accept(event.getEntity());
                 Color color = new Color(ColorHelper.getColor(s.getFirst()));
                 CubeParticleData particleData = new CubeParticleData(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 0.025f, 1, false);
                 event.getEntity().level.getServer().getLevel(event.getEntity().level.dimension()).sendParticles(particleData, event.getEntity().getX() + (event.getEntity().level.random.nextFloat() - 0.5), (event.getEntity().getEyeY() - (event.getEntity().getBbHeight() / 2)) + (event.getEntity().level.random.nextFloat() - 0.5), event.getEntity().getZ() + (event.getEntity().level.random.nextFloat() - 0.5), 3, 0, 0, 0, 0.1);
-            });
+            };
             toRemove.forEach(cap::removeMark);
-            //}
+            toTick.forEach(cap::tickMark);
+            PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> PacketDistributor.TargetPoint.p(
+                    event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ(), 128, event.getEntity().level.dimension()
+            ).get()), new ClientboundMarkPacket(cap.serializeNBT(), event.getEntity().getId()));
         });
     }
 
@@ -375,12 +416,7 @@ public class ForgeEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void renderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
-            ParticleRenderer.renderParticles(event.getPoseStack(), Minecraft.getInstance().gameRenderer.getMainCamera(), event.getPartialTick());
-        }
-    }
+
 
     @SubscribeEvent
     public static void playerTick(TickEvent.PlayerTickEvent event) {

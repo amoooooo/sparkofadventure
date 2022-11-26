@@ -3,7 +3,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/shield.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "+"
       ]
@@ -11,15 +12,17 @@
     {
       "type": "bitmap",
       "file": "elemental:font/fire.png",
-        "ascent": 8,
-        "chars": [
-            "A"
-        ]
+      "ascent": 10,
+      "height": 10,
+      "chars": [
+        "A"
+      ]
     },
     {
       "type": "bitmap",
       "file": "elemental:font/cold.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "B"
       ]
@@ -27,7 +30,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/lightning.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "C"
       ]
@@ -35,7 +39,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/poison.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "D"
       ]
@@ -43,7 +48,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/acid.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "E"
       ]
@@ -51,7 +57,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/necrotic.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "F"
       ]
@@ -59,7 +66,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/radiant.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "G"
       ]
@@ -67,7 +75,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/force.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "H"
       ]
@@ -75,7 +84,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/psychic.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "I"
       ]
@@ -83,7 +93,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/thunder.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "J"
       ]
@@ -91,7 +102,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/air.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "K"
       ]
@@ -99,7 +111,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/earth.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "L"
       ]
@@ -107,7 +120,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/water.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "M"
       ]
@@ -115,7 +129,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/nature.png",
-      "ascent": 8,
+      "ascent": 10,
+      "height": 10,
       "chars": [
         "N"
       ]

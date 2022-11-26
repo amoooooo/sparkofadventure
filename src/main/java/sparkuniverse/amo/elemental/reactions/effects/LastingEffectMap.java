@@ -8,7 +8,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 
+import net.minecraftforge.network.PacketDistributor;
 import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
+import sparkuniverse.amo.elemental.net.ClientboundMarkPacket;
+import sparkuniverse.amo.elemental.net.PacketHandler;
 import sparkuniverse.amo.elemental.reactions.capability.ReactionMarkCapabilityProvider;
 import sparkuniverse.amo.elemental.reactions.entity.NatureCoreEntity;
 
@@ -46,6 +49,9 @@ public class LastingEffectMap {
                             entity1.getCapability(ReactionMarkCapabilityProvider.CAPABILITY).ifPresent((cap) -> {
                                 if(!cap.hasMark("elemental:lightning_damage")){
                                     cap.addMark("elemental:lightning_damage");
+                                    PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> PacketDistributor.TargetPoint.p(
+                                            entity1.getX(), entity1.getY(), entity1.getZ(), 128, entity1.level.dimension()
+                                    ).get()), new ClientboundMarkPacket(cap.serializeNBT(), entity1.getId()));
                                 }
                             });
                             entity1.hurt(DamageSource.LIGHTNING_BOLT, 0.15f);

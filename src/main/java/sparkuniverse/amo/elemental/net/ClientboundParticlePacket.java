@@ -3,6 +3,7 @@ package sparkuniverse.amo.elemental.net;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import sparkuniverse.amo.elemental.client.ClientPacketHandler;
+import sparkuniverse.amo.elemental.util.Color;
 
 import java.util.function.Supplier;
 
@@ -15,6 +16,7 @@ public class ClientboundParticlePacket {
         this.uuid = uuid;
         this.txt = txt;
         this.color = color;
+        Color c = new Color(color);
     }
 
     public static void encode(ClientboundParticlePacket msg, FriendlyByteBuf buf) {
