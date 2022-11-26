@@ -1,0 +1,7 @@
+{
+        "parent": "minecraft:item/generated",
+        "textures": {
+          "layer0": "elemental:items/base_augment",
+          "layer1": "elemental:items/necrotic"
+        }
+      }

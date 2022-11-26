@@ -52,7 +52,7 @@ public class ArsEvents {
         for(int i = 0; i < spell.recipe.size(); i++){
             AbstractSpellPart part = spell.recipe.get(i);
             if(SpellUtil.getElementalEffect(part) != null){
-                spell.recipe.add(i+1, SpellUtil.getElementalEffect(part));
+                //spell.recipe.add(i+1, SpellUtil.getElementalEffect(part));
                 Color col = new Color(ColorHelper.getColor(((ElementalEffect)SpellUtil.getElementalEffect(part)).getElement()));
                 context.setColors(new ParticleColor(col.r, col.g, col.b));
             }
@@ -106,14 +106,7 @@ public class ArsEvents {
         Attribute playerAtt = ((TypedRangedAttribute) attribute).getType().get();
         double elementalSpellDamage = 0;
         boolean isEntireSpellElemental = SpellUtil.isEntireSpellElemental(context.getSpell());
-        if(SpellUtil.isSpellElemental(context.getSpell().recipe.get(context.getCurrentIndex()-1))){
-            String resElement = Elemental.getElement(attribute.getDescriptionId());
-            ElementalEffect effect = (ElementalEffect) SpellUtil.getElementalEffect(context.getSpell().recipe.get(context.getCurrentIndex()-1));
-            String spellElement = Elemental.getElement(effect.getElement().toLowerCase());
-            if(resElement.equals(spellElement)){
-                elementalSpellDamage = spelldamage * critMult;
-            }
-        } else if (isEntireSpellElemental){
+        if (isEntireSpellElemental){
             String resElement = Elemental.getElement(attribute.getDescriptionId());
             ElementalEffect eff = SpellUtil.findElementalEffect(context);
             if(eff != null){
@@ -121,6 +114,13 @@ public class ArsEvents {
                 if(resElement.equals(spellElement)){
                     elementalSpellDamage = spelldamage * critMult;
                 }
+            }
+        } else if(SpellUtil.isSpellElemental(context.getSpell().recipe.get(context.getCurrentIndex()-1))){
+            String resElement = Elemental.getElement(attribute.getDescriptionId());
+            ElementalEffect effect = (ElementalEffect) SpellUtil.getElementalEffect(context.getSpell().recipe.get(context.getCurrentIndex()-1));
+            String spellElement = Elemental.getElement(effect.getElement().toLowerCase());
+            if(resElement.equals(spellElement)){
+                elementalSpellDamage = spelldamage * critMult;
             }
         } else {
             String resElement = Elemental.getElement(attribute.getDescriptionId());

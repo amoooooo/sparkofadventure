@@ -30,6 +30,8 @@ public class ClientPacketHandler {
     public static void handleTextParticle(ClientboundParticlePacket msg, Supplier<NetworkEvent.Context> ctx) {
         if (ctx.get().getDirection().getReceptionSide().isClient()) {
             if (ElementalConfig.enableDamageIndicators.get()) {
+                //check if string is number
+                if(msg.txt.equals("0") || msg.txt.equals("0.0")) return;
                 MutableComponent text = Component.literal("");
                 String txt = msg.txt;
                 String first = getSymbolFromColor(msg.color);

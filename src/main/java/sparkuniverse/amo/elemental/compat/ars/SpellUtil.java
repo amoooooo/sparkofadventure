@@ -22,7 +22,7 @@ public class SpellUtil {
     }
 
     public static boolean isEntireSpellElemental(Spell spell) {
-        return !spell.recipe.stream().map(s -> s instanceof ElementalEffect).toList().isEmpty();
+        return !spell.recipe.stream().filter(s -> s instanceof ElementalEffect).toList().isEmpty();
     }
 
     public static ElementalEffect findElementalEffect(SpellContext spell){

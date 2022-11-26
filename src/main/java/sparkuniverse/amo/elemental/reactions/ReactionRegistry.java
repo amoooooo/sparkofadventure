@@ -168,12 +168,12 @@ public class ReactionRegistry {
         return true;
     }));
 
-    public static Reaction WATER_NATURE = registerReaction(new Reaction(new Pair<>(AttributeRegistry.WATER_DAMAGE, AttributeRegistry.NATURE_DAMAGE), 1.5, (entity, player, damage) -> {
+    public static Reaction BLOOM = registerReaction(new Reaction(new Pair<>(AttributeRegistry.WATER_DAMAGE, AttributeRegistry.NATURE_DAMAGE), 1.5, (entity, player, damage) -> {
         if(entity instanceof NatureCoreEntity) return false;
         NatureCoreEntity core = new NatureCoreEntity(EntityRegistry.NATURE_CORE.get(), entity.level);
         core.setPos(entity.getEyePosition().add(0,0.05,0));
         entity.level.addFreshEntity(core);
-        core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(5)-2.5f)/20f,0.1,(entity.level.random.nextInt(5)-2.5f)/20f));
+        core.setDeltaMovement(core.getDeltaMovement().add((entity.level.random.nextInt(1)-0.5f)/20f,0.1,(entity.level.random.nextInt(1)-0.5f)/20f));
         PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(entity.getX(), entity.getY()+entity.level.random.nextFloat(), entity.getZ(), 32, entity.level.dimension())), new ClientboundParticlePacket(entity.getId(), "Bloom!", ColorHelper.getColor(AttributeRegistry.NATURE_DAMAGE.get().getDescriptionId())));
         return true;
     }));

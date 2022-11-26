@@ -3,6 +3,7 @@ package sparkuniverse.amo.elemental.compat.ars;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -12,7 +13,7 @@ import sparkuniverse.amo.elemental.Elemental;
 
 import java.util.Set;
 
-public class ElementalEffect extends AbstractEffect {
+public class ElementalEffect extends AbstractAugment {
     public static final ElementalEffect FIRE = new ElementalEffect("fire_damage", "Fire"){
 
     };
@@ -32,7 +33,7 @@ public class ElementalEffect extends AbstractEffect {
 
 
     public ElementalEffect(String tag, String description) {
-        super(tag, description);
+        super(new ResourceLocation(Elemental.MODID, tag), description);
     }
 
     public String getElement() {
@@ -42,18 +43,8 @@ public class ElementalEffect extends AbstractEffect {
     }
 
     @Override
-    public void onResolve(HitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
-        super.onResolve(rayTraceResult, world, shooter, spellStats, spellContext, resolver);
-    }
-
-    @Override
     public int getDefaultManaCost() {
-        return 1;
+        return 10;
     }
 
-    @NotNull
-    @Override
-    protected Set<AbstractAugment> getCompatibleAugments() {
-        return augmentSetOf(AugmentAmplify.INSTANCE);
-    }
 }

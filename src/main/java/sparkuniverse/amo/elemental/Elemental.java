@@ -10,6 +10,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import sparkuniverse.amo.elemental.compat.ars.ArsEvents;
@@ -44,6 +45,7 @@ public class Elemental {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ElementalConfig.GENERAL_SPEC, "elemental.toml");
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         DAMAGE_ATTRIBUTES.register(modEventBus);
         RESISTANCE_ATTRIBUTES.register(modEventBus);
         REACTION_ATTRIBUTES.register(modEventBus);
@@ -60,12 +62,25 @@ public class Elemental {
         if(ModList.get().isLoaded("ars_nouveau")){
             try {
                 ArsRegistry.registerGlyphs();
+                ArsRegistry.addAugments();
                 SpellUtil.init();
                 MinecraftForge.EVENT_BUS.register(ArsEvents.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void setup(final FMLCommonSetupEvent event){
+        event.enqueueWork(() -> {
+            if(ModList.get().isLoaded("ars_nouveau")){
+                try {
+                    ArsRegistry.addAugments();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public static String getElement(String id){

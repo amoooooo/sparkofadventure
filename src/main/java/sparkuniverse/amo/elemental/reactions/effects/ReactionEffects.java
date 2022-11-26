@@ -45,14 +45,14 @@ public class ReactionEffects {
         public void onApplication(@Nullable MobEffectInstance effectInstance, @Nullable Entity source, LivingEntity entity, int amplifier) {
             super.onApplication(effectInstance, source, entity, amplifier);
             if(entity.level.isClientSide)return;
-            PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect()).toString(), effectInstance.getDuration(), effectInstance.getAmplifier(), effectInstance.isAmbient(), false, effectInstance.showIcon(), false));
+            //PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect()).toString(), effectInstance.getDuration(), effectInstance.getAmplifier(), effectInstance.isAmbient(), false, effectInstance.showIcon(), false));
         }
 
         @Override
         public void onRemoval(MobEffectInstance effectInstance, LivingEntity entity) {
             super.onRemoval(effectInstance, entity);
             if(entity.level.isClientSide)return;
-            PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect()).toString(), effectInstance.getDuration(), effectInstance.getAmplifier(), effectInstance.isAmbient(), false, effectInstance.showIcon(), true));
+            //PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientboundMobEffectPacket(entity.getId(), ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect()).toString(), effectInstance.getDuration(), effectInstance.getAmplifier(), effectInstance.isAmbient(), false, effectInstance.showIcon(), true));
         }
     }.addAttributeModifier(Attributes.MOVEMENT_SPEED, "698d2af8-5876-11ed-9b6a-0242ac120002", 0D, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<MobEffect> BURNING = EFFECTS.register("burning", () -> new ExtendedMobEffect(MobEffectCategory.HARMFUL, ColorHelper.getColor("fire")) {

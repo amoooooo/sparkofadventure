@@ -67,7 +67,7 @@ public class ForgeEventHandler {
 
     public static boolean avoidSO;
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void attackEvent(final LivingAttackEvent event) {
         if (event.getEntity().level.isClientSide || avoidSO) return;
         avoidSO = true;

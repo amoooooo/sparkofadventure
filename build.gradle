@@ -208,7 +208,7 @@ dependencies {
     implementation fg.deobf("curse.maven:placebo-283644:4036338")
     implementation fg.deobf("curse.maven:obscure_api-638417:4094568")
     implementation fg.deobf("curse.maven:mhb-559894:3885595")
-    implementation fg.deobf("curse.maven:better_combat-639842:4046670")
+    compileOnly fg.deobf("curse.maven:better_combat-639842:4046670")
     implementation fg.deobf("curse.maven:cloth_config-348521:3972423")
     implementation fg.deobf("curse.maven:player_animator-658587:3987591")
 
