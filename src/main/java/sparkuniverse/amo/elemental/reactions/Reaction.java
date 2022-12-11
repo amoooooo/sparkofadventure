@@ -9,11 +9,21 @@ import org.apache.commons.lang3.function.TriFunction;
 public class Reaction {
     private final Pair<RegistryObject<Attribute>, RegistryObject<Attribute>> reaction;
     private final double multiplier;
-    private final TriFunction<LivingEntity, LivingEntity, Double, Boolean> consumer;
+    public TriFunction<LivingEntity, LivingEntity, Double, Boolean> consumer;
 
     public Reaction(Pair<RegistryObject<Attribute>, RegistryObject<Attribute>> reaction, double multiplier, TriFunction<LivingEntity, LivingEntity, Double, Boolean> consumer) {
         this.reaction = reaction;
         this.multiplier = multiplier;
+        this.consumer = consumer;
+    }
+
+    public Reaction(Pair<RegistryObject<Attribute>, RegistryObject<Attribute>> reaction, double multiplier) {
+        this.reaction = reaction;
+        this.multiplier = multiplier;
+        this.consumer = null;
+    }
+
+    public void setReaction(TriFunction<LivingEntity, LivingEntity, Double, Boolean> consumer) {
         this.consumer = consumer;
     }
 

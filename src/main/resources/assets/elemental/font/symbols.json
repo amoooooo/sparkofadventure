@@ -3,8 +3,8 @@
     {
       "type": "bitmap",
       "file": "elemental:font/shield.png",
-      "ascent": 10,
-      "height": 10,
+      "ascent": 8,
+      "height": 8,
       "chars": [
         "+"
       ]

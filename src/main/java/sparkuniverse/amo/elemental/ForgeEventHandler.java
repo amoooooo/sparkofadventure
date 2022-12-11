@@ -1,6 +1,5 @@
 package sparkuniverse.amo.elemental;
 
-import com.mojang.math.Matrix3f;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,6 +35,7 @@ import sparkuniverse.amo.elemental.damagetypes.AttributeRegistry;
 import sparkuniverse.amo.elemental.damagetypes.DamageResistanceJSONListener;
 import sparkuniverse.amo.elemental.damagetypes.EntityDamageTypeJSONListener;
 import sparkuniverse.amo.elemental.damagetypes.TypedRangedAttribute;
+import sparkuniverse.amo.elemental.damagetypes.shields.SelfShieldGoal;
 import sparkuniverse.amo.elemental.net.ClientBoundShieldPacket;
 import sparkuniverse.amo.elemental.net.ClientboundMarkPacket;
 import sparkuniverse.amo.elemental.net.ClientboundParticlePacket;
@@ -45,7 +45,6 @@ import sparkuniverse.amo.elemental.reactions.ReactionRegistry;
 import sparkuniverse.amo.elemental.reactions.capability.*;
 import sparkuniverse.amo.elemental.reactions.effects.ReactionEffects;
 import sparkuniverse.amo.elemental.reactions.effects.particle.CubeParticleData;
-import sparkuniverse.amo.elemental.reactions.effects.particle.ParticleRenderer;
 import sparkuniverse.amo.elemental.reactions.effects.particle.ParticleStates;
 import sparkuniverse.amo.elemental.reactions.entity.NatureCoreEntity;
 import sparkuniverse.amo.elemental.util.Color;
@@ -173,11 +172,16 @@ public class ForgeEventHandler {
         hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
             handleShieldReaction(hurtEntity, finalDamage, playerAtt, totalDamage, shieldDamage, s);
         });
-        hurtEntity.hurt(src(attacker), totalDamage.get().floatValue());
+        hurtEntity.hurt(DamageSource.MAGIC, totalDamage.get().floatValue());
         float visualDamage = (float) (totalDamage.get() + shieldDamage.get());
+        AtomicReference<String> visDamage = new AtomicReference<>(String.valueOf(Math.floor(visualDamage * 10) / 10));
+        hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
+            if(s.hasShield()){
+                visDamage.set("\uD83D\uDEE1" + visDamage);
+            }
+        });
         PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(hurtEntity.getX(), hurtEntity.getY() + hurtEntity.level.random.nextFloat(), hurtEntity.getZ(), 128, hurtEntity.level.dimension())),
-                new ClientboundParticlePacket(hurtEntity.getId(), "" + String.valueOf(Math.floor(visualDamage * 10) / 10), ColorHelper.getColor(playerAtt.getDescriptionId())));
-        // 🛡
+                new ClientboundParticlePacket(hurtEntity.getId(), visDamage.get(), ColorHelper.getColor(playerAtt.getDescriptionId())));
         if (mobResistance > 1) {
             hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.HOSTILE, 1.0f, 0.25f);
         } else if (mobResistance < 1) {
@@ -211,17 +215,17 @@ public class ForgeEventHandler {
             totalDamage.updateAndGet(v -> (v - shieldDamage.get()));
             finalDamage.set((float) (totalDamage.get() * 0.25f));
             shieldDamage.set(shieldDamage.get() * 2);
-            //damageShield(hurtEntity, playerAtt, shieldDamage, s);
+            damageShield(hurtEntity, playerAtt, shieldDamage, s);
         } else if (s.hasShield()) {
             shieldDamage.set((float) (totalDamage.get() * 0.35f));
             totalDamage.updateAndGet(v -> (v - shieldDamage.get()));
             finalDamage.set((float) (totalDamage.get() * 0.65f));
-            //damageShield(hurtEntity, playerAtt, shieldDamage, s);
+            damageShield(hurtEntity, playerAtt, shieldDamage, s);
         }
     }
 
     private static void damageShield(LivingEntity hurtEntity, Attribute playerAtt, AtomicReference<Float> shieldDamage, @NotNull ShieldCapabilityHandler s) {
-        s.damageShield(shieldDamage.get(), playerAtt.getDescriptionId());
+        s.damageShield(shieldDamage.get());
         if (s.getShield().getHealth() < 0) {
             s.clearShield();
             PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientBoundShieldPacket(0, shieldDamage.get(), true, hurtEntity.getId(), false, ""));
@@ -230,7 +234,7 @@ public class ForgeEventHandler {
             hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.HOSTILE, 2f, hurtEntity.level.random.nextFloat() * 0.1f);
         } else {
             PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ClientBoundShieldPacket(0, shieldDamage.get(), false, hurtEntity.getId(), false, ""));
-            //hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SHIELD_BREAK, SoundSource.HOSTILE, 1.0f, hurtEntity.level.random.nextFloat()+0.1f);
+            hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.SHIELD_BREAK, SoundSource.HOSTILE, 1.0f, hurtEntity.level.random.nextFloat()+0.1f);
         }
     }
 
@@ -241,7 +245,7 @@ public class ForgeEventHandler {
         if (hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).resolve().isPresent()) {
             hurtEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
                 if (s.hasShield()) {
-                    damageStr.set("" + damageStr);
+                    damageStr.set("\uD83D\uDEE1" + damageStr);
                     //🛡
                 }
             });
@@ -327,7 +331,7 @@ public class ForgeEventHandler {
         if (event.getEntity().getPersistentData().contains("apoth.boss")) {
             Entity entity = event.getEntity();
             if (entity instanceof Mob le) {
-                //le.goalSelector.addGoal(3, new SelfShieldGoal(le));
+                le.goalSelector.addGoal(3, new SelfShieldGoal(le));
             }
         }
     }

@@ -36,7 +36,7 @@ public class ShieldRenderLayer<T extends LivingEntity, M extends EntityModel<T>>
         pLivingEntity.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
             if(s.hasShield()){
                 Color color = new Color(ColorHelper.getColor(s.getShieldDefType()), 1);
-                var opacity = 0.35f;
+                double opacity = Math.min(0.75, s.getShieldHealth()/s.getShieldMaxHealth());
                 EntityModel<T> entityModel = this.model;
                 this.getParentModel().copyPropertiesTo(entityModel);
                 entityModel.prepareMobModel(pLivingEntity, pLimbSwing, pLimbSwingAmount, pPartialTick);
@@ -44,7 +44,7 @@ public class ShieldRenderLayer<T extends LivingEntity, M extends EntityModel<T>>
                 VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.entityTranslucentCull(ICE));
                 ps.scale(1.0001f, 1.0001f, 1.0001f);
                 ps.translate(0, -0.01825*pLivingEntity.getEyeHeight(), 0);
-                entityModel.renderToBuffer(ps, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, color.r/255f, color.g/255f, color.b/255f, opacity);
+                entityModel.renderToBuffer(ps, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, color.r/255f, color.g/255f, color.b/255f, (float) opacity);
                 ps.translate(0, 0.000025, 0);
                 ps.scale(1/1.075f, 1/1.075f, 1/1.075f);
                 ps.translate(-pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight()/2f, -pLivingEntity.getBbHeight()+0.5f, -pLivingEntity.getBbWidth()*pLivingEntity.getBbHeight()/2f);

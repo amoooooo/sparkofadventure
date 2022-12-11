@@ -13,9 +13,11 @@ import sparkuniverse.amo.elemental.net.ClientBoundShieldPacket;
 import sparkuniverse.amo.elemental.net.PacketHandler;
 import sparkuniverse.amo.elemental.reactions.capability.ShieldCapabilityProvider;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class SelfShieldGoal extends Goal {
     private final Mob mob;
-
+    private int cooldown = 0;
     public SelfShieldGoal(Mob mob) {
         Elemental.LOGGER.warn("SelfShieldGoal applied to {}", mob);
         this.mob = mob;
@@ -23,13 +25,31 @@ public class SelfShieldGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        float mobHealth = 1-(mob.getHealth() / mob.getMaxHealth());
-        if(mob.level.random.nextFloat() >= Math.min((0.05f + mobHealth), 0.15f)) return false;
+        if(cooldown != 0)
+            return false;
+        AtomicBoolean cap = new AtomicBoolean(true);
+        mob.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(s -> {
+            if (s.hasShield()) {
+                cap.set(false);
+            }
+        });
+        if(!cap.get()) return false;
+        if(!isLowEnough()) return false;
+        float mobHealth = (mob.getHealth()/mob.getMaxHealth());
+        float chance = mob.level.random.nextFloat() * (1-mobHealth);
+//        Elemental.LOGGER.error("Mob health: {}, chance: {}, canShield: {}", mobHealth, chance, isLowEnough());
+        if(chance <= 0.85f) {
+            Elemental.LOGGER.error("FAIL: Mob health: {}, chance: {}, canShield: {}", mobHealth, chance, isLowEnough());
+            return false;
+        }
+        Elemental.LOGGER.error("SUCCESS: Mob health: {}, chance: {}, canShield: {}", mobHealth, chance, isLowEnough());
         if(!AttributeRegistry.RESISTANCE_ATTRIBUTES.getEntries().stream().map(s -> s.get().equals(getHighestAttribute(mob))).toList().isEmpty()){
+            cooldown = 200;
             return true;
         }
         if(mob.getCapability(ShieldCapabilityProvider.CAPABILITY).isPresent()){
             if(mob.getCapability(ShieldCapabilityProvider.CAPABILITY).resolve().get().getShield() == null){
+                cooldown = 200;
                 return true;
             }
         }
@@ -38,6 +58,7 @@ public class SelfShieldGoal extends Goal {
 
     @Override
     public void tick() {
+        cooldown--;
         mob.getCapability(ShieldCapabilityProvider.CAPABILITY).ifPresent(cap -> {
             if(cap.getShield().getDefType().equals("none")){
                 TypedRangedAttribute highestAttr = getHighestAttribute(mob);
@@ -73,5 +94,9 @@ public class SelfShieldGoal extends Goal {
             }
         }
         return true;
+    }
+
+    public boolean isLowEnough(){
+        return mob.getHealth() <= mob.getMaxHealth()/2f;
     }
 }
