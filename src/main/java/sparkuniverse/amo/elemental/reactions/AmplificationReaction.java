@@ -9,6 +9,7 @@ import org.apache.commons.lang3.function.TriFunction;
 public class AmplificationReaction extends Reaction {
     public AmplificationReaction(Pair<RegistryObject<Attribute>, RegistryObject<Attribute>> reaction, double multiplier, TriFunction<LivingEntity, LivingEntity, Double, Boolean> consumer) {
         super(reaction, multiplier, consumer);
+        // TODO
     }
 
     public AmplificationReaction(Pair<RegistryObject<Attribute>, RegistryObject<Attribute>> reaction, double multiplier) {
